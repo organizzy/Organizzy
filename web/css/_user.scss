@@ -1,0 +1,44 @@
+#page-user-login {
+    background-color: #FF851B;
+
+    #logo {
+        display: block;
+        width: 80%;
+        max-width: 600px;
+        margin: 20px auto 30px auto;
+    }
+
+    .register-button {
+        text-align: center;
+        margin-top: 30px;
+
+        a {
+            color: #ffffff;
+            border-bottom: 1px dashed #ffffff;
+        }
+    }
+
+    .row {
+        margin-bottom: 15px;
+    }
+
+    input {
+        margin-bottom: 0;
+    }
+
+    .errorMessage {
+        font-size: .8em;
+        color: #ffd4cd;
+    }
+
+}
+
+
+#page-user-view {
+    .profile-detail {
+        font-size: .95em;
+        border-bottom: 1px dotted #999999;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+}

@@ -1,0 +1,10 @@
+web/assets/*
+!web/assets/.gitkeep
+web/photos/*
+!web/photos/.gitkeep
+protected/runtime/*
+!protected/runtime/.gitkeep
+themes/classic/views/
+config.php
+vendor/
+.idea/
