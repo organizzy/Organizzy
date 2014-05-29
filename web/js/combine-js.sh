@@ -20,8 +20,7 @@ do
         echo "File changed $src_time"
         echo "" > $dst_file
         #uglifyjs --source-map "$dst_file.map" -o "$dst_file" $src_files
-        closure --create_source_map "$dst_file.map" --js_output_file "$dst_file" $src_files 
-        #&& echo "//# sourceMappingURL=app.js.map" >> "$dst_file"
+        closure --create_source_map "$dst_file.map" --js_output_file "$dst_file" $src_files && echo "//# sourceMappingURL=app.js.map" >> "$dst_file"
     fi
     sleep 1
 done
