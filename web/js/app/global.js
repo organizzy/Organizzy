@@ -78,17 +78,15 @@ var O = window.O || {};
         $('.errorMessage').hide();
         for(var attr in errors) {
             var name = model + '[' + attr + ']';
-            var row = $('[name="' + name + '"]').parent();
-            if (row.length > 0) row.forEach(function(row){
+            var rows = $('[name="' + name + '"]').parent();
+            if (rows.length > 0) rows.each(function(i, row){
                 var $error = $(row).find('.errorMessage');
                 if ($error.length == 0) {
                     $error = $('<div class="errorMessage"></div>');
                     $(row).append($error);
                 }
-                //var errorsLi = [];
                 $error.html(errors[attr].join('<br />')).show();
             });
-
         }
     };
 
