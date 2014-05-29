@@ -41,14 +41,9 @@ class EventRecurrence extends ActiveRecord
     const VOTE_OPEN = 'open';
     const VOTE_VOTED = 'voted';
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'event_recurrence';
-	}
-
+    /**
+     * @return string formatted date
+     */
     public function __toString() {
         return O::app()->dateFormatter->formatDateTime($this->date, 'medium', false);
     }
@@ -74,6 +69,11 @@ class EventRecurrence extends ActiveRecord
 		);
 	}
 
+    /**
+     * validate date attribute
+     *
+     * @param $attribute
+     */
     public function validateDate($attribute) {
         $nowDate = date('Y-m-d');
         $nowTime = date('H:i:s');
@@ -84,6 +84,8 @@ class EventRecurrence extends ActiveRecord
             $this->addError('begin_time', O::t('organizzy', '{attribute} can not be past', ['{attribute}' => 'Begin Time']));
         }
     }
+
+
 
 	/**
 	 * @return array relational rules.
@@ -122,38 +124,15 @@ class EventRecurrence extends ActiveRecord
         return parent::beforeSave();
     }
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'event_recurrence';
+    }
 
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('event_id',$this->event_id,true);
-		$criteria->compare('vote_status',$this->vote_status);
-		$criteria->compare('date',$this->date,true);
-		$criteria->compare('begin_time',$this->begin_time,true);
-		$criteria->compare('end_time',$this->end_time,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-
-	/**
+    /**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.

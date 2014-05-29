@@ -20,8 +20,10 @@
 class FormHandler {
 
     /**
-     * @param ActiveRecord $model
-     * @return bool
+     * Save $model with attribute fetched from $_POST
+     *
+     * @param ISavableModel $model
+     * @return bool true if saving success
      */
     public static function save($model) {
         $modelName = CHtml::modelName($model);
@@ -37,12 +39,24 @@ class FormHandler {
         return false;
     }
 
+    /**
+     * save the $model, and redirect to $url when success
+     *
+     * @param ISavableModel $model model to be saved
+     * @param string|array $url
+     */
     public static function saveRedirect($model, $url) {
         if (self::save($model)) {
             O::app()->controller->redirect($url);
         }
     }
 
+    /**
+     * save the model, and redirect to action view when success
+     *
+     * @param ISavableModel $model
+     * @param string $idAttr name of attribute which is used for saving id of the model
+     */
     public static function saveRedirectView($model, $idAttr = 'id') {
         $id = $model->$idAttr;
         self::saveRedirect($model, ['view', 'id' => $id]);

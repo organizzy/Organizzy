@@ -49,8 +49,68 @@ class Activity extends ActiveRecord
     private $type_split = null;
 
     /**
-     * @param $user_id
+     * get title/name of the activity
+     * @return string
+     */
+    public function getTitle() {
+        if ($this->isEvent()) {
+            return $this->event->title;
+        }
+        elseif ($this->isTask()) {
+            return $this->task->title;
+        }
+        return '';
+    }
+
+    /**
+     * @return bool return true if type is event
+     */
+    public function isEvent() {
+        return $this->getItemType() == self::TYPE_EVENT;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTask() {
+        return $this->getItemType() == self::TYPE_TASK;
+    }
+
+    /**
+     * Get activity type
+     *
+     * @return string return event its type is {@link Event} or task if its type is {@link Task}
+     */
+    public function getItemType() {
+        return $this->getTypePart(0);
+    }
+
+    /**
+     * @return string depends on item type
+     */
+    public function getSubType() {
+        return $this->getTypePart(1);
+    }
+
+    /**
+     * get activity type or its subtype. see {@link getItemType} and {@link getSubType}
+     * @param int $part 0: item type, 1: sub type
+     * @return string
+     */
+    private function getTypePart($part) {
+        if ($this->type_split == null) {
+            $this->type_split = explode('-', $this->type);
+        }
+        return $this->type_split[$part];
+    }
+
+
+
+    /**
+     *
+     * @param int $user_id
      * @return $this
+     * @scope
      */
     public function onlyMine($user_id) {
         $criteria = $this->getDbCriteria();
@@ -63,6 +123,7 @@ class Activity extends ActiveRecord
     /**
      * @param string $date yyy-mm-dd
      * @return $this
+     * @scope
      */
     public function onlyForDate($date) {
         $nextDate = date('Y-m-d', strtotime($date) + 86400);
@@ -84,7 +145,11 @@ class Activity extends ActiveRecord
             ]);
     }
 
-
+    /**
+     * @param int $month month index 1: january, 12 december
+     * @param int $year full year. ex: 2015
+     * @return $this
+     */
     public function onlyMonth($month, $year) {
         $criteria =& $this->getDbCriteria();
         $criteria->compare('datetime', sprintf('>=%04d-%02-01 00:00', $year, $month));
@@ -92,48 +157,7 @@ class Activity extends ActiveRecord
         return $this;
     }
 
-    public function getTitle() {
-        if ($this->isEvent()) {
-            return $this->event->title;
-        }
-        elseif ($this->isTask()) {
-            return $this->task->title;
-        }
-        return '';
-    }
 
-    public function isEvent() {
-        return $this->getItemType() == self::TYPE_EVENT;
-    }
-
-    public function isTask() {
-        return $this->getItemType() == self::TYPE_TASK;
-    }
-
-
-    public function getItemType() {
-        return $this->getTypePart(0);
-    }
-
-    public function getSubType() {
-        return $this->getTypePart(1);
-    }
-
-    private function getTypePart($part) {
-        if ($this->type_split == null) {
-            $this->type_split = explode('-', $this->type);
-        }
-        return $this->type_split[$part];
-    }
-
-
-    /**
-     * @return string the associated database table name
-     */
-    public function tableName()
-    {
-        return 'activity';
-    }
 
     /**
      * @return array validation rules for model attributes.
@@ -151,32 +175,6 @@ class Activity extends ActiveRecord
             array('user_id, datetime, organization_id, department_id, recurrence_id, task_id, type', 'safe', 'on'=>'search'),
         );
     }
-
-    protected function jsonSafeAttributes() {
-        return [
-            'type', 'datetime',
-            'organization.logo.url' => 'organization_logo',
-
-            'event.id' => 'event_id',
-            'event.title' => 'event_title',
-            'recurrence_id',
-
-            'task_id',
-            'task.title' => 'task_title'
-        ];
-    }
-
-
-//    public function eventOrgOnly() {
-//        $this->getDbCriteria()->compare($this->getTableAlias(true) . '.type', self::TYPE_EVENT . Event::TYPE_ORGANIZATION);
-//        return $this;
-//    }
-//
-//    public function eventOrgAndAdminOnly() {
-//        $this->getDbCriteria()->addInCondition($this->getTableAlias(true) . '.type',
-//            [self::TYPE_EVENT . Event::TYPE_ORGANIZATION, self::TYPE_EVENT . Event::TYPE_ADMINS]);
-//        return $this;
-//    }
 
     /**
      * @return array relational rules.
@@ -212,34 +210,11 @@ class Activity extends ActiveRecord
     }
 
     /**
-     * Retrieves a list of models based on the current search/filter conditions.
-     *
-     * Typical usecase:
-     * - Initialize the model fields with values from filter form.
-     * - Execute this method to get CActiveDataProvider instance which will filter
-     * models according to data in model fields.
-     * - Pass data provider to CGridView, CListView or any similar widget.
-     *
-     * @return CActiveDataProvider the data provider that can return the models
-     * based on the search/filter conditions.
+     * @return string the associated database table name
      */
-    public function search()
+    public function tableName()
     {
-        // @todo Please modify the following code to remove attributes that should not be searched.
-
-        $criteria=new CDbCriteria;
-
-        $criteria->compare('user_id',$this->user_id,true);
-        $criteria->compare('datetime',$this->datetime,true);
-        $criteria->compare('organization_id',$this->organization_id,true);
-        $criteria->compare('department_id',$this->department_id,true);
-        $criteria->compare('recurrence_id',$this->recurrence_id,true);
-        $criteria->compare('task_id',$this->task_id,true);
-        $criteria->compare('type',$this->type,true);
-
-        return new CActiveDataProvider($this, array(
-            'criteria'=>$criteria,
-        ));
+        return 'activity';
     }
 
     /**

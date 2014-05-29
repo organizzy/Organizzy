@@ -43,9 +43,11 @@
  * @property Task[] $assignedTasks
  * @property TaskProgress[] $taskProgresses
  *
- * @property Profile $aboutMe;
+ * @property Profile $aboutMe
  *
- * @property EventAttendance $attendance;
+ * @property EventAttendance $attendance
+ *
+ * @method User findByPk($pk)
  */
 class User extends ActiveRecord
 {
@@ -57,23 +59,20 @@ class User extends ActiveRecord
     public $old_password;
 
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'user';
-	}
 
     /**
-     * @return string
+     * return user full name
+     *
+     * @return string full name
      */
     public function __toString() {
         return $this->name;
     }
 
     /**
-     * @param $prop_name
+     * return profile value
+     *
+     * @param string $prop_name
      * @return null|string
      */
     public function getProfile($prop_name) {
@@ -84,7 +83,10 @@ class User extends ActiveRecord
         return null;
     }
 
-
+    /**
+     * @param $recurrent_id
+     * @return $this
+     */
     public function withAttendance($recurrent_id) {
         $this->metaData->addRelation('attendance', [
                 self::HAS_ONE, 'EventAttendance', ['user_id' => 'id'], 'on' => 'recurrence_id = :rid',
@@ -93,14 +95,29 @@ class User extends ActiveRecord
         return $this->with('attendance');
     }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
+    public function defaultScope() {
+        return ['with' => 'photo'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function beforeSave() {
+        if ($this->password1 != '' && $this->scenario == self::SCENARIO_REGISTER || $this->scenario == self::SCENARIO_EDIT_ACCOUNT) {
+            $this->password = crypt($this->password1);
+        }
+        return parent::beforeSave();
+    }
+
+
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        // NOTE: you should only define rules for those attributes that
+        // will receive user inputs.
+        return array(
             ['email, name', 'required'],
             ['name', 'length', 'max'=>32],
             ['photo_id', 'safe'],
@@ -121,8 +138,8 @@ class User extends ActiveRecord
             ],
 
             ['old_password', 'checkOldPassword', 'on' => self::SCENARIO_EDIT_ACCOUNT],
-		);
-	}
+        );
+    }
 
     public function checkOldPassword() {
         if ($this->password != crypt($this->old_password, $this->password)) {
@@ -130,47 +147,31 @@ class User extends ActiveRecord
         }
     }
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		return array(
-			'profiles' => array(self::HAS_MANY, 'Profile', 'user_id', 'index' => 'prop_name'),
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        return array(
+            'profiles' => array(self::HAS_MANY, 'Profile', 'user_id', 'index' => 'prop_name'),
             'photo' => array(self::HAS_ONE, 'Photo', ['id' => 'photo_id'], 'select' => 'url'),
 
-			'organizations' => array(self::MANY_MANY, 'Organization', 'role(user_id, organization_id)'),
-			'events' => array(self::HAS_MANY, 'Event', 'owner_id'),
-			//'eventRecurrences' => array(self::MANY_MANY, 'EventRecurrence', 'event_attendance(user_id, recurrence_id)'),
-			//'eventTimeOptions' => array(self::MANY_MANY, 'EventTimeOptions', 'event_vote(user_id, option_id)'),
-			//'assignedTasks' => array(self::MANY_MANY, 'Task', 'task_assign(user_id, task_id)'),
-			//'tasks' => array(self::HAS_MANY, 'Task', 'owner_id'),
-			//'taskProgresses' => array(self::HAS_MANY, 'TaskProgress', 'reporter_id'),
+            'organizations' => array(self::MANY_MANY, 'Organization', 'role(user_id, organization_id)'),
+            'events' => array(self::HAS_MANY, 'Event', 'owner_id'),
+            //'eventRecurrences' => array(self::MANY_MANY, 'EventRecurrence', 'event_attendance(user_id, recurrence_id)'),
+            //'eventTimeOptions' => array(self::MANY_MANY, 'EventTimeOptions', 'event_vote(user_id, option_id)'),
+            //'assignedTasks' => array(self::MANY_MANY, 'Task', 'task_assign(user_id, task_id)'),
+            //'tasks' => array(self::HAS_MANY, 'Task', 'owner_id'),
+            //'taskProgresses' => array(self::HAS_MANY, 'TaskProgress', 'reporter_id'),
 
             'roles' => [self::HAS_MANY, 'Role', 'user_id', 'order' => 'join_time DESC'],
 
             'aboutMe' => array(self::HAS_ONE, 'Profile', ['user_id' => 'id'],
                 'select' => 'prop_val', 'on' => 'prop_name = \'aboutMe\'')
-		);
-	}
-
+        );
+    }
 
     /**
-     * @return bool
-     */
-    public function beforeSave() {
-        if ($this->password1 != '' && $this->scenario == self::SCENARIO_REGISTER || $this->scenario == self::SCENARIO_EDIT_ACCOUNT) {
-            $this->password = crypt($this->password1);
-        }
-        return parent::beforeSave();
-    }
-
-
-    public function defaultScope() {
-        return ['with' => 'photo'];
-    }
-
-	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
@@ -189,36 +190,13 @@ class User extends ActiveRecord
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('email',$this->email,true);
-		$criteria->compare('password',$this->password,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('photo',$this->photo,true);
-		$criteria->compare('register_time',$this->register_time,true);
-		$criteria->compare('status',$this->status);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'user';
+    }
 
 	/**
 	 * Returns the static model of the specified AR class.

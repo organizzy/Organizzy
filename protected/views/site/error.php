@@ -11,5 +11,4 @@ $this->layout = '//layouts/single'
     <div class="error">
         <?php echo CHtml::encode($message); ?>
     </div>
-    <?php var_dump($_SERVER); ?>
 </div>

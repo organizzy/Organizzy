@@ -132,7 +132,7 @@ class OrganizationController extends Controller
      *
      * leave current organization
      *
-     * @param $id organization id
+     * @param int $id organization id
      */
     public function actionLeave($id) {
         $otherAdminCount = Role::model()->count([
@@ -152,7 +152,11 @@ class OrganizationController extends Controller
         $this->render('leave', array('model' => $this->loadModel($id), 'lastAdmin' => $lastAdmin));
     }
 
-
+    /**
+     * upload photo
+     *
+     * @param int $id organization id
+     */
     public function actionUploadPhoto($id) {
         $org = $this->loadModel($id);
         $this->rule->checkUpdateAccess($org);

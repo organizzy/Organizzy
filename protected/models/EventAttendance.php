@@ -34,13 +34,11 @@ class EventAttendance extends ActiveRecord
     const STATUS_NOT_ATTEND = 'not-attend';
 
     /**
-     * @return string the associated database table name
+     * translate status
+     *
+     * @param null|string $status
+     * @return string|null
      */
-    public function tableName()
-    {
-        return 'event_attendance';
-    }
-
     public static  function getStatusStrings($status = null) {
         $strings = null;
         if (!$strings) $strings = [
@@ -50,6 +48,8 @@ class EventAttendance extends ActiveRecord
         ];
         return $status ? $strings[$status] : $strings;
     }
+
+
 
     /**
      * @return array validation rules for model attributes.
@@ -92,31 +92,11 @@ class EventAttendance extends ActiveRecord
     }
 
     /**
-     * Retrieves a list of models based on the current search/filter conditions.
-     *
-     * Typical usecase:
-     * - Initialize the model fields with values from filter form.
-     * - Execute this method to get CActiveDataProvider instance which will filter
-     * models according to data in model fields.
-     * - Pass data provider to CGridView, CListView or any similar widget.
-     *
-     * @return CActiveDataProvider the data provider that can return the models
-     * based on the search/filter conditions.
+     * @return string the associated database table name
      */
-    public function search()
+    public function tableName()
     {
-        // @todo Please modify the following code to remove attributes that should not be searched.
-
-        $criteria=new CDbCriteria;
-
-        $criteria->compare('recurrence_id',$this->recurrence_id,true);
-        $criteria->compare('user_id',$this->user_id,true);
-        $criteria->compare('status',$this->status,true);
-        $criteria->compare('comment',$this->comment,true);
-
-        return new CActiveDataProvider($this, array(
-            'criteria'=>$criteria,
-        ));
+        return 'event_attendance';
     }
 
     /**

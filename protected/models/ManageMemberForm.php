@@ -23,7 +23,7 @@
  * @property Organization $organization
  * @property Role[] $roles;
  */
-class ManageMemberForm extends CFormModel {
+class ManageMemberForm extends CFormModel implements ISavableModel {
 
     const ACTION_KICK = 'kick';
     const ACTION_PROMOTE = 'promote';
@@ -44,15 +44,13 @@ class ManageMemberForm extends CFormModel {
     /** @var  Organization */
     private $_organization = null;
 
+
     /** @var Role[] */
     private $_roles = false;
 
-    public function rules() {
-        return [
-            ['users_id, action', 'safe']
-        ];
-    }
-
+    /**
+     * @return array action_name => action_description
+     */
     public function getPossibleActions() {
         return [
             self::ACTION_KICK => O::t('organizzy', 'Kick'),
@@ -61,6 +59,11 @@ class ManageMemberForm extends CFormModel {
         ];
     }
 
+    /**
+     * get organization instance
+     *
+     * @return Organization
+     */
     public function getOrganization() {
         if ($this->_organization == null) {
             return $this->_organization = Organization::model()->findByPk($this->organization_id);
@@ -68,6 +71,9 @@ class ManageMemberForm extends CFormModel {
         return $this->_organization;
     }
 
+    /**
+     * @return Role[]
+     */
     public function getRoles() {
         if ($this->_roles === false) {
             $this->_roles = Role::model()->exceptMe()->with('user')->findAllByAttributes(
@@ -76,6 +82,12 @@ class ManageMemberForm extends CFormModel {
             );
         }
         return $this->_roles ?: [];
+    }
+
+    public function rules() {
+        return [
+            ['users_id, action', 'safe']
+        ];
     }
 
     public function save() {

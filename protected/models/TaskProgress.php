@@ -94,35 +94,6 @@ class TaskProgress extends ActiveRecord
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('task_id',$this->task_id,true);
-		$criteria->compare('reporter_id',$this->reporter_id,true);
-		$criteria->compare('report_time',$this->report_time,true);
-		$criteria->compare('progress',$this->progress,true);
-		$criteria->compare('comment',$this->comment,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
 
 	/**
 	 * Returns the static model of the specified AR class.

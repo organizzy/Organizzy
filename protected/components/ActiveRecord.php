@@ -23,7 +23,7 @@
  *
  *
  */
-abstract class ActiveRecord extends CActiveRecord {
+abstract class ActiveRecord extends CActiveRecord implements ISavableModel {
 
     /** @var bool use transaction when saving */
     public $useTransaction = false;
@@ -100,57 +100,16 @@ abstract class ActiveRecord extends CActiveRecord {
         }
     }
 
+    /**
+     * invalidate cache which is saved when finding record
+     *
+     * @param string|array $pk primary key
+     * @see findByPk
+     */
     public function invalidateCache($pk = null) {
         if ($pk == null) $pk = $this->getPrimaryKey();
         O::app()->cache->delete($this->getCacheName($pk));
     }
-
-
-    protected function jsonSafeAttributes() {
-        return [];
-    }
-
-    public function toArray($attributes = []) {
-        $returnAttributes = [];
-
-        foreach($this->jsonSafeAttributes() as $k => $v) {
-            if (is_numeric($k)) {
-                $returnAttributes[$v] = $v;
-            } else {
-                $returnAttributes[$k] = $v;
-            }
-        }
-
-        foreach($attributes as $k => $v) {
-            if (is_numeric($k)) {
-                $returnAttributes[$v] = $v;
-            } elseif ($v == null) {
-                unset($returnAttributes[$k]);
-            } else{
-                $returnAttributes[$k] = $v;
-            }
-        }
-
-
-        $array = [];
-        foreach($returnAttributes as $k => $v) {
-            if (($value = self::getPropertyRecursive($this, $k)) !== null)
-                $array[$v] = $value;
-        }
-        return $array;
-    }
-
-
-    private static function getPropertyRecursive($obj, $prop) {
-        $prop = explode('.', $prop, 2);
-        $obj = $obj->{$prop[0]}; //isset($obj->{$prop[0]}) ? $obj->{$prop[0]} : null;
-        if ($obj && count($prop) > 1) {
-            $obj = self::getPropertyRecursive($obj, $prop[1]);
-        }
-        return $obj;
-
-    }
-
 
     /**
      * @param bool $forceString

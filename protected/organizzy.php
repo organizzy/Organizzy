@@ -34,6 +34,8 @@ class O extends Yii {
  *
  * @property AccessRule $accessRule
  * @property boolean $isAjaxRequest
+ *
+ * @property string $dummyPhoto
  */
 class OrganizzyApplication extends CWebApplication {
 

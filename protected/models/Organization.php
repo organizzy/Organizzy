@@ -26,27 +26,44 @@
  * @property string $description
  * @property string $info
  * @property int $logo_id
- * @property Photo $logo
- * @property string $create_time
- * @property string $status
  *
  * The followings are the available model relations:
- * @property User[] $users
+ * @property Photo $logo
  * @property Event[] $events
  * @property Department[] $departments
- * @property Role[] $membersRole
+ * @property Role[] $adminsRole
  *
- * @property Role $role
  *
- * @property Activity[] $activities;
- * @method Activity[] activities(mixed $args);
+ * @property Role $role current user role
  */
 class Organization extends ActiveRecord implements IRoleBasedModel
 {
     /**
+     * @param null $user_id
+     * @return Role
+     */
+    public function getCurrentUserRule($user_id = null) {
+        if ($user_id == null) {
+            $user_id = O::app()->user->id;
+        }
+
+        return Role::model()->findByPk(['organization_id' => $this->id, 'user_id' => $user_id]);
+    }
+
+    /**
+     * @return string return organization name
+     */
+    public function __toString() {
+        return $this->name;
+    }
+
+
+
+    /**
      * @param null|int $user_id [optional]
      * @param bool $archived
-     * @return $this
+     * @return Organization
+     * @scope
      */
     public function onlyMine($user_id = null, $archived = false) {
         if ($user_id == null) {
@@ -67,34 +84,24 @@ class Organization extends ActiveRecord implements IRoleBasedModel
         return $this;
     }
 
+    /**
+     * @scope
+     * @return $this
+     */
+    public function defaultScope() {
+        return $this->with(['logo' => ['select' => 'url']]);
+    }
+
+    /**
+     * @return $this
+     */
     public function withLogo() {
         return $this->with(['logo' => ['select' => 'url']]);
     }
 
     /**
-     * @param null $user_id
-     * @return Role
+     * @return array access rules
      */
-    public function getCurrentUserRule($user_id = null) {
-        if ($user_id == null) {
-            $user_id = O::app()->user->id;
-        }
-
-        return Role::model()->findByPk(['organization_id' => $this->id, 'user_id' => $user_id]);
-    }
-
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'organization';
-	}
-
-    public function __toString() {
-        return $this->name;
-    }
-
     public function accessRules() {
         return [
             ['action' => AccessRule::VIEW, 'organization' => $this->id, 'role' => '*'],
@@ -102,14 +109,11 @@ class Organization extends ActiveRecord implements IRoleBasedModel
         ];
     }
 
-
 	/**
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
 	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
 		return array(
             ['name,description', 'required'],
 
@@ -123,56 +127,29 @@ class Organization extends ActiveRecord implements IRoleBasedModel
 	}
 
 
-    public function getDepartmentArray() {
-        $departments = [];
-        foreach ($this->departments as $department) {
-            $departments[] = ModelToArray::convert($department, false, ['id','name','description']);
-        }
-        return $departments;
-    }
-
-    public function getAdminArray() {
-        return ModelToArray::convert($this->adminsRole, true, [
-                'user.id' => 'id',
-                'user.name' => 'name',
-                'user.photo.url' => 'photo',
-                'position'
-            ]);
-    }
-
-    public function getEventArray() {
-        $models = Event::model()->onlyOrganization($this->id, $this->getCurrentUserRule()->isAdmin)->findAll();
-        return ModelToArray::convert($models, true, ['id', 'title','description']);
-    }
-
-
 	/**
 	 * @return array relational rules.
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'users' => array(self::MANY_MANY, 'User', 'role(organization_id, user_id)', 'index' => 'id',
-                'select' => 'id,name', 'order' => '"users_users".department_id, "users_users"."type" DESC, "users".name'),
+		return [
+            'logo' => [self::HAS_ONE, 'Photo', ['id' => 'logo_id'], 'select' => 'url'],
 
-			'events' => array(self::HAS_MANY, 'Event', 'organization_id'),
+            'departments' => [self::HAS_MANY, 'Department', 'organization_id',
+                'index' => 'id','select' => 'id,name,description'],
 
-			'departments' => array(self::HAS_MANY, 'Department', 'organization_id',
-                'index' => 'id','select' => 'id,name,description'),
-            //'membersRole' => [self::HAS_MANY, 'Role', 'organization_id'],
-            'logo' => array(self::HAS_ONE, 'Photo', ['id' => 'logo_id'], 'select' => 'url'),
+            'users' => [self::MANY_MANY, 'User', 'role(organization_id, user_id)', 'index' => 'id',
+                'select' => 'id,name', 'order' => '"users_users".department_id, "users_users"."type" DESC, "users".name'],
 
-            //'activities' => [self::HAS_MANY, 'Activity', 'organization_id', 'with' => 'event'],
+
             'adminsRole' => [self::HAS_MANY, 'Role', 'organization_id',
                 'with' => ['user' => ['select' => 'id,name'], 'user.photo' => ['select' => 'url']],
                 'select' => 'position,status',
                 'order' => '("adminsRole".status <> \'invited\'), "user".name',
                 'condition' => 'type = \'' . Role::TYPE_SUPER_ADMIN . '\''],
 
-            // 'role' => [self::HAS_ONE, 'Role', ['organization_id' => 'id'], 'joinType' => 'JOIN'],
-		);
+            'events' => [self::HAS_MANY, 'Event', 'organization_id'],
+		];
 	}
 
 	/**
@@ -191,38 +168,15 @@ class Organization extends ActiveRecord implements IRoleBasedModel
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'organization';
+    }
 
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('info',$this->info,true);
-		$criteria->compare('logo',$this->logo,true);
-		$criteria->compare('create_time',$this->create_time,true);
-		$criteria->compare('status',$this->status);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-	/**
+    /**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.

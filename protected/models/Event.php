@@ -45,64 +45,14 @@ class Event extends ActiveRecord implements IRoleBasedModel
     const TYPE_ORGANIZATION = 'organization';
     const TYPE_DEPARTMENT = 'department';
     const TYPE_ADMINS = 'admins';
-
-    private $_isEditable = null;
-
-
-    /**
-     * @param null $user_id
-     * @return $this
-     */
-    public function onlyMine($user_id = null) {
-        $user_id = $user_id ?: O::app()->user->id;
-        $this->getDbCriteria()->compare('owner_id', $user_id)->compare('type', self::TYPE_PERSONAL);
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function onlyLater() {
-        $criteria = $this->getDbCriteria();
-        $criteria->join .= ' JOIN event_recurrence er ON er.event_id = t.id';
-        $criteria->addCondition('combine_datetime(er.date, er.begin_time) >= NOW()');
-        $criteria->select = 't.id, t.title, t.description, min(er.date) as r_date';
-        $criteria->group = 't.id, t.title, t.description';
-        $criteria->order = 'r_date';
-        return $this;
-    }
+    const TYPE_CUSTOM = 'custom';
 
 
     /**
-     * @param $organization_id
-     * @param bool $show_admin_events
-     * @return $this
-     */
-    public function onlyOrganization($organization_id, $show_admin_events = false) {
-        $criteria = $this->getDbCriteria();
-        $criteria->compare('organization_id', $organization_id);
-        if ($show_admin_events)
-            $criteria->compare('type', [self::TYPE_ORGANIZATION, self::TYPE_ADMINS]);
-        else
-            $criteria->compare('type', self::TYPE_ORGANIZATION);
-        return $this;
-    }
-
-    /**
-     * @param int $department_id
-     * @return $this
-     */
-    public function onlyDepartments($department_id) {
-        $this->getDbCriteria()
-            ->compare('type', self::TYPE_DEPARTMENT)
-            ->compare('department_id', $department_id);
-        return $this;
-    }
-
-
-    /**
-     * @param null $with_attendance_rid
-     * @return User[]
+     * Get users that belong to this event
+     *
+     * @param int $with_attendance_rid recurrence id. See {@link EventRecurrence.id EventRecurrence.id}
+     * @return User[] with attendance
      */
     public function getUsers($with_attendance_rid = null) {
         if ($this->type == self::TYPE_PERSONAL)
@@ -130,7 +80,7 @@ class Event extends ActiveRecord implements IRoleBasedModel
 
     /**
      * @param null $type
-     * @return string[]
+     * @return string
      */
     public function getTypeDescription($type = null) {
         static $types = [
@@ -141,6 +91,58 @@ class Event extends ActiveRecord implements IRoleBasedModel
         ];
         return $types[$type ?: $this->type];
     }
+
+
+
+    /**
+     * @param null $user_id
+     * @return $this
+     */
+    public function onlyMine($user_id = null) {
+        $user_id = $user_id ?: O::app()->user->id;
+        $this->getDbCriteria()->compare('owner_id', $user_id)->compare('type', self::TYPE_PERSONAL);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function onlyLater() {
+        $criteria = $this->getDbCriteria();
+        $criteria->join .= ' JOIN event_recurrence er ON er.event_id = t.id';
+        $criteria->addCondition('combine_datetime(er.date, er.begin_time) >= NOW()');
+        $criteria->select = 't.id, t.title, t.description, min(er.date) as r_date';
+        $criteria->group = 't.id, t.title, t.description';
+        $criteria->order = 'r_date';
+        return $this;
+    }
+
+    /**
+     * @param $organization_id
+     * @param bool $show_admin_events
+     * @return $this
+     */
+    public function onlyOrganization($organization_id, $show_admin_events = false) {
+        $criteria = $this->getDbCriteria();
+        $criteria->compare('organization_id', $organization_id);
+        if ($show_admin_events)
+            $criteria->compare('type', [self::TYPE_ORGANIZATION, self::TYPE_ADMINS]);
+        else
+            $criteria->compare('type', self::TYPE_ORGANIZATION);
+        return $this;
+    }
+
+    /**
+     * @param int $department_id
+     * @return $this
+     */
+    public function onlyDepartments($department_id) {
+        $this->getDbCriteria()
+            ->compare('type', self::TYPE_DEPARTMENT)
+            ->compare('department_id', $department_id);
+        return $this;
+    }
+
 
 	/**
 	 * @return string the associated database table name
@@ -200,37 +202,6 @@ class Event extends ActiveRecord implements IRoleBasedModel
 			'organization_id' => 'Organization',
 			'department_id' => 'Department',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('title',$this->title,true);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('type',$this->type,true);
-		$criteria->compare('owner_id',$this->owner_id,true);
-		$criteria->compare('organization_id',$this->organization_id,true);
-		$criteria->compare('department_id',$this->department_id,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

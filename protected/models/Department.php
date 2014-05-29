@@ -25,11 +25,10 @@
  * @property string $organization_id
  * @property string $name
  * @property string $description
- * @property string $create_time
  *
  * The followings are the available model relations:
- * @property Event[] $events
  * @property Organization $organization
+ * @property Event[] $events
  * @property Task[] $tasks
  *
  * @property Role[] $roles
@@ -37,31 +36,19 @@
 class Department extends ActiveRecord implements IRoleBasedModel
 {
 
-
-    public function accessRules() {
-        return [
-            ['action' => AccessRule::VIEW, 'organization' => $this->organization_id, 'role' => '*'],
-            ['action' => '*', 'organization' => $this->organization_id, 'department' => $this->id,
-             'role' => Role::TYPE_ADMIN],
-            ['action' => '*', 'organization' => $this->organization_id, 'role' => Role::TYPE_SUPER_ADMIN],
-        ];
+    /**
+     * @return string return department name
+     */
+    public function __toString() {
+        return $this->name;
     }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'department';
-	}
 
-	/**
+    /**
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
+    {
 		return array(
 			array('organization_id, name, description', 'required'),
 			array('name', 'length', 'max'=>64),
@@ -91,12 +78,29 @@ class Department extends ActiveRecord implements IRoleBasedModel
 		);
 	}
 
-    public function __toString() {
-        return $this->name;
+    /**
+     * access rules.
+     *
+     * @return array
+     */
+    public function accessRules() {
+        return [
+            ['action' => AccessRule::VIEW, 'organization' => $this->organization_id, 'role' => '*'],
+            ['action' => '*', 'organization' => $this->organization_id, 'department' => $this->id,
+             'role' => Role::TYPE_ADMIN],
+            ['action' => '*', 'organization' => $this->organization_id, 'role' => Role::TYPE_SUPER_ADMIN],
+        ];
     }
 
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'department';
+    }
 
-	/**
+    /**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
@@ -108,35 +112,6 @@ class Department extends ActiveRecord implements IRoleBasedModel
 			'description' => 'Description',
 			'create_time' => 'Create Time',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('organization_id',$this->organization_id,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('create_time',$this->create_time,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

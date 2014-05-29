@@ -12,11 +12,9 @@ if (isset($_GET['return'])) {
 
         <h1 class="title"><i class="icon icon-left-nav"></i><?php echo $this->pageTitle ?></h1>
     </a>
-    <?php if ($this->menu) { ?>
+    <?php if ($this->menu) : ?>
         <a class="bar-btn pull-right" href="#" id="tab-item-4"><i class="icon fa fa-ellipsis-v"></i></a>
-    <?php } elseif ($this->editButton) {  ?>
-        <a class="icon fa bar-btn <?php echo isset($this->editButton['icon']) ? $this->editButton['icon'] : 'fa-edit' ?> pull-right" href="<?php echo $this->editButton['url'] ?>"></a>
-    <?php } ?>
+    <?php endif ?>
 
 </header>
 <?php

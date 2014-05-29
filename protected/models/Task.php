@@ -26,11 +26,13 @@
  * @property string $title
  * @property string $description
  * @property string $deadline
- * @property boolean $done
+ * @property string $status
  * @property string $created
  * @property string $type
  * @property string $organization_id
  * @property string $department_id
+ *
+ * @property bool done
  *
  *
  * The followings are the available model relations:
@@ -49,19 +51,40 @@ class Task extends ActiveRecord implements IRoleBasedModel
 
     const ACTION_UPDATE_PROGRESS = 'progress';
 
-    /** @var  int[] */
+    /** @var int[] list of user id */
     public $assign_to = [];
 
-    public $useTransaction = true;
-
+    /** @var int[] see {@link $assign_to} */
     private $old_assign_to;
 
     public $date;
 
     public $time;
 
+    public $useTransaction = true;
+
     /**
-     * @param $user_id
+     * set current status
+     *
+     * @return bool true if task marked as done
+     */
+    public function getDone() {
+        return $this->status == self::STATUS_DONE;
+    }
+
+    /**
+     * set current status
+     *
+     * @param bool $done
+     */
+    public function setDone($done) {
+        $this->status = $done ? self::STATUS_DONE : self::STATUS_UNDONE;
+    }
+
+    /**
+     * only show tasks whose owner is $user_id
+     *
+     * @param int $user_id
      * @return $this
      */
     public function onlyMine($user_id) {
@@ -71,6 +94,12 @@ class Task extends ActiveRecord implements IRoleBasedModel
         return $this;
     }
 
+    /**
+     * only show tasks which is belong to $department_id
+     *
+     * @param int $department_id
+     * @return $this
+     */
     public function onlyDepartment($department_id) {
         $this->getDbCriteria()
             ->compare('type', self::TYPE_DEPARTMENT)
@@ -79,6 +108,8 @@ class Task extends ActiveRecord implements IRoleBasedModel
     }
 
     /**
+     * only show tasks which is not marked as done
+     *
      * @return $this
      */
     public function onlyUndone() {
@@ -95,6 +126,11 @@ class Task extends ActiveRecord implements IRoleBasedModel
         return $this;
     }
 
+    /**
+     * show undone tasks first
+     *
+     * @return $this
+     */
     public function orderByDoneStatus() {
         $this->getDbCriteria()->order = 'status, deadline ';
         return $this;
@@ -204,14 +240,6 @@ class Task extends ActiveRecord implements IRoleBasedModel
 		);
 	}
 
-    public function getDone() {
-        return $this->status == self::STATUS_DONE;
-    }
-
-    public function setDone($done) {
-        $this->status = $done ? self::STATUS_DONE : self::STATUS_UNDONE;
-    }
-
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -228,39 +256,6 @@ class Task extends ActiveRecord implements IRoleBasedModel
 			'type' => 'Type',
 			'department_id' => 'Department',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('owner_id',$this->owner_id,true);
-		$criteria->compare('title',$this->title,true);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('deadline',$this->deadline,true);
-		$criteria->compare('done',$this->done);
-		$criteria->compare('created',$this->created,true);
-		$criteria->compare('type',$this->type);
-		$criteria->compare('department_id',$this->department_id,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

@@ -49,7 +49,7 @@ function getVersionedUrl($fileName) {
 <?php $this->renderPartial('//layouts/_flash') ?>
 <div id="loader"></div>
 <script>window.onload=function(){var d=document,h=d.getElementsByTagName('head')[0],i=function(src, onload) {
-var j=d.createElement('script');j.src=src;j.onload=onload;h.appendChild(j);
+var j=d.createElement('script');j.src=src;if(onload)j.onload=onload;h.appendChild(j);
 };i('<?php echo $assetBase ?>/js/lib<?php if (isset($_COOKIE['cordova']) && $_COOKIE['cordova'] != '0') echo '-mobile' ?>-2.js',
 function(){i('<?php echo getVersionedUrl('/js/app.js') ?>')})};</script>
 </body>

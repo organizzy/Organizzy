@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class ProfileEditForm extends CFormModel {
+class ProfileEditForm extends CFormModel implements ISavableModel {
 
     /** @var  int */
     public $user_id;
@@ -26,6 +26,8 @@ class ProfileEditForm extends CFormModel {
     private $_profiles;
 
     private $old_name;
+
+
     public $name;
 
     public static $safeAttributes = array('name', 'aboutMe', 'location', 'description', 'city', 'birth_date', 'phone');

@@ -19,7 +19,7 @@
 
 /**
  * Class AjaxHandler
- *
+ * Class for sending javascript responds to client
  *
  */
 class AjaxHandler {

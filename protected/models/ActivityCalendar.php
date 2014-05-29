@@ -31,9 +31,6 @@ class ActivityCalendar extends CModel {
     /** @var  int */
     private $user_id;
 
-    /** @var  Activity[][] */
-    private $activities;
-
     /** @var  int[] */
     private $numActivities;
 
@@ -55,27 +52,11 @@ class ActivityCalendar extends CModel {
         $this->year    = $year;
     }
 
-
     /**
-     * @return Activity[][]
+     * get number of activities of each day
+     *
+     * @return int[]
      */
-    public function getAllActivities() {
-        if ($this->activities == null) {
-            /** @var Activity[] $models */
-            $models = Activity::model()->onlyMine($this->user_id)->onlyMonth($this->month, $this->year)->findAll();
-            $activities = [];
-            foreach($models as $activity) {
-                $d = intval(substr($activity->datetime, 8, 2));
-                if (!isset($activities[$d]))
-                    $activities[$d] = [];
-
-                $activities[$d][] =& $activity;
-            }
-            $this->activities = $activities;
-        }
-        return $this->activities;
-    }
-
     public function getNumActivitiesPerDay() {
         if ($this->numActivities == null) {
             $numActivities = [];
@@ -110,19 +91,21 @@ class ActivityCalendar extends CModel {
         return $this->numActivities;
     }
 
-    /**
-     * @param int $day
-     * @return Activity[]
-     */
-    public function getActivitiesAt($day) {
-        $activities = $this->getAllActivities();
-        return  (isset($activities[$day])) ? $activities[$day] : [];
-    }
 
+    /**
+     * Get week day of 1th
+     *
+     * @return int
+     */
     public function getFirstWeekDay() {
         return date('w', mktime(0, 0, 0, $this->month, 1, $this->year));
     }
 
+    /**
+     * Get number of day
+     *
+     * @return int
+     */
     public function getNumDays() {
         return date('d', mktime(0, 0, 0, $this->month + 1, 0, $this->year));
     }
@@ -144,7 +127,6 @@ class ActivityCalendar extends CModel {
     }
 
 
-
     /**
      * Returns the list of attribute names of the model.
      *
@@ -152,6 +134,6 @@ class ActivityCalendar extends CModel {
      */
     public function attributeNames()
     {
-        // TODO: Implement attributeNames() method.
+        // not necessary
     }
 }

@@ -51,10 +51,17 @@ class Photo extends ActiveRecord
         return 'photo';
     }
 
+    /**
+     * @return string url to the photo
+     */
     public function __toString() {
         return $this->url;
     }
 
+    /**
+     * @param null|string $size
+     * @return string
+     */
     public function getUrl($size = null) {
         if ($size) {
             return O::app()->getBaseUrl(true) . $this->url . '-' . $size . '.jpg';
@@ -146,36 +153,6 @@ class Photo extends ActiveRecord
             'height' => 'Height',
             'upload_time' => 'Upload Time',
         );
-    }
-
-    /**
-     * Retrieves a list of models based on the current search/filter conditions.
-     *
-     * Typical usecase:
-     * - Initialize the model fields with values from filter form.
-     * - Execute this method to get CActiveDataProvider instance which will filter
-     * models according to data in model fields.
-     * - Pass data provider to CGridView, CListView or any similar widget.
-     *
-     * @return CActiveDataProvider the data provider that can return the models
-     * based on the search/filter conditions.
-     */
-    public function search()
-    {
-        // @todo Please modify the following code to remove attributes that should not be searched.
-
-        $criteria=new CDbCriteria;
-
-        $criteria->compare('id',$this->id,true);
-        $criteria->compare('file_name',$this->file_name,true);
-        $criteria->compare('url',$this->url,true);
-        $criteria->compare('width',$this->width);
-        $criteria->compare('height',$this->height);
-        $criteria->compare('upload_time',$this->upload_time,true);
-
-        return new CActiveDataProvider($this, array(
-            'criteria'=>$criteria,
-        ));
     }
 
     /**

@@ -70,41 +70,10 @@ class Role extends ActiveRecord
     }
 
     /**
-     * @param $organization_id
-     * @param $user_id
-     * @param array $condition
-     * @return Role
+     * Get most used position on current organization
+     *
+     * @return string[]
      */
-    public function findFor($organization_id, $user_id, $condition = []) {
-        return $this->findByPk(['organization_id' => $organization_id, 'user_id' => $user_id], $condition);
-    }
-
-    /**
-     * @return string the associated database table name
-     */
-    public function tableName()
-    {
-        return 'role';
-    }
-
-
-    /**
-     * @return $this
-     */
-    public function superAdminOnly() {
-        $this->getDbCriteria()->compare('type', self::TYPE_SUPER_ADMIN);
-        return $this;
-    }
-
-    public function exceptMe($user_id = null) {
-        if (! $user_id) {
-            $user_id = O::app()->user->id;
-        }
-        $this->getDbCriteria()->compare('user_id', '<>' . $user_id);
-        return $this;
-    }
-
-
     public function getMostUsedPositions() {
         $criteria = new CDbCriteria();
         $criteria->select = 'position';
@@ -148,6 +117,42 @@ class Role extends ActiveRecord
         return $options;
     }
 
+    /**
+     * @param $organization_id
+     * @param $user_id
+     * @param array $condition
+     * @return Role
+     */
+    public function findFor($organization_id, $user_id, $condition = []) {
+        return $this->findByPk(['organization_id' => $organization_id, 'user_id' => $user_id], $condition);
+    }
+
+
+    /**
+     * show only super admin
+     *
+     * @return $this
+     */
+    public function superAdminOnly() {
+        $this->getDbCriteria()->compare('type', self::TYPE_SUPER_ADMIN);
+        return $this;
+    }
+
+    /**
+     *
+     *
+     * @param null $user_id
+     * @return $this
+     */
+    public function exceptMe($user_id = null) {
+        if (! $user_id) {
+            $user_id = O::app()->user->id;
+        }
+        $this->getDbCriteria()->compare('user_id', '<>' . $user_id);
+        return $this;
+    }
+
+
     public function beforeSave() {
         if ($this->department_id) {
             $this->type = $this->is_admin ? self::TYPE_ADMIN : self::TYPE_MEMBER;
@@ -175,10 +180,9 @@ class Role extends ActiveRecord
             array('department_id, type, status, join_time', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('user_id, organization_id, department_id, type, position, status, join_time', 'safe', 'on'=>'search'),
+            //array('user_id, organization_id, department_id, type, position, status, join_time', 'safe', 'on'=>'search'),
         );
     }
-
 
     /**
      * @param string $attr
@@ -239,34 +243,11 @@ class Role extends ActiveRecord
     }
 
     /**
-     * Retrieves a list of models based on the current search/filter conditions.
-     *
-     * Typical usecase:
-     * - Initialize the model fields with values from filter form.
-     * - Execute this method to get CActiveDataProvider instance which will filter
-     * models according to data in model fields.
-     * - Pass data provider to CGridView, CListView or any similar widget.
-     *
-     * @return CActiveDataProvider the data provider that can return the models
-     * based on the search/filter conditions.
+     * @return string the associated database table name
      */
-    public function search()
+    public function tableName()
     {
-        // @todo Please modify the following code to remove attributes that should not be searched.
-
-        $criteria=new CDbCriteria;
-
-        $criteria->compare('user_id',$this->user_id,true);
-        $criteria->compare('organization_id',$this->organization_id,true);
-        $criteria->compare('department_id',$this->department_id,true);
-        $criteria->compare('type',$this->type,true);
-        $criteria->compare('position',$this->position,true);
-        $criteria->compare('status',$this->status,true);
-        $criteria->compare('join_time',$this->join_time,true);
-
-        return new CActiveDataProvider($this, array(
-            'criteria'=>$criteria,
-        ));
+        return 'role';
     }
 
     /**

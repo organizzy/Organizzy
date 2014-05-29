@@ -22,8 +22,8 @@
  * This is the customized base controller class.
  * All controller classes for this application should extend from this base class.
  *
- * @property string $userId
- * @property AccessRule $rule;
+ * @property string $userId current user id
+ * @property AccessRule $rule
  */
 class Controller extends CController
 {
@@ -41,10 +41,14 @@ class Controller extends CController
 	 */
 	public $menu=array();
 
-    //public $editButton = null;
-
+    /**
+     * @var string|array url to go when user press back button, only for layout "single"
+     */
     public $backUrl = null;
 
+    /**
+     * @var bool disable caching on client side
+     */
     public $disableCache = false;
 
     /**
@@ -63,13 +67,14 @@ class Controller extends CController
         }
     }
 
-
-    protected function beforeRender($view) {
-        if ($this->getAction()->id == 'update' || O::app()->request->getIsPostRequest()) {
+    /**
+     * @param CAction $action
+     * @return bool
+     */
+    protected function beforeAction($action) {
+        if ($action->id == 'update') {
             $this->disableCache = true;
         }
-
-        return parent::beforeRender($view);
     }
 
     /**
@@ -98,6 +103,10 @@ class Controller extends CController
         return $this;
     }
 
+    /**
+     * @return int
+     * @see userId
+     */
     public function getUserId() {
         return O::app()->getUser()->getId();
     }

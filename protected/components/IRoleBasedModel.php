@@ -20,7 +20,21 @@
 interface IRoleBasedModel {
 
     /**
-     * @return array
+     * Array of access rules.
+     * Access rule format:
+     * [
+     *     'action' => string or string[] of <b>view</b>, <b>create</b>, <b>update</b>, <b>delete</b>, etc. or * for all actions
+     *
+     *     'allow' => [optional] true if action is allowed
+     *
+     *     // role based [optional] (only if 'allow' not specified)
+     *     'organization' => organization id
+     *     'department' => department id (for department's item)
+     *     'role' => user role
+     *
+     * ]
+     * @return array access rules of the model
+     * @see AccessRule::can
      */
     public function accessRules();
 } 

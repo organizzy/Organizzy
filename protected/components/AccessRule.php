@@ -33,9 +33,6 @@ class AccessRule {
     /** @var string[]  */
     private $roles;
 
-    /** @var  int[] */
-    private $department_maps;
-
     /** @var string  */
     private $cache_name;
 
@@ -57,33 +54,67 @@ class AccessRule {
      * @param IRoleBasedModel $item
      * @param bool $throw
      * @return bool
+     * @see checkAccess
      */
     public function checkCreateAccess(IRoleBasedModel $item, $throw = true) {
         return $this->checkAccess(self::CREATE, $item, $throw);
     }
 
+    /**
+     * check if user can view $item
+     *
+     * @param IRoleBasedModel $item
+     * @param bool $throw
+     * @return bool
+     * @see checkAccess
+     */
     public function checkViewAccess(IRoleBasedModel $item, $throw = true) {
         return $this->checkAccess(self::VIEW, $item, $throw);
     }
 
+    /**
+     * check if user can update/edit $item
+     *
+     * @param IRoleBasedModel $item
+     * @param bool $throw
+     * @return bool
+     * @see checkAccess
+     */
     public function checkUpdateAccess(IRoleBasedModel $item, $throw = true) {
         return $this->checkAccess(self::UPDATE, $item, $throw);
     }
 
-
+    /**
+     * check if user can delete $item
+     *
+     * @param IRoleBasedModel $item
+     * @param bool $throw
+     * @return bool
+     * @see checkAccess
+     */
     public function checkDeleteAccess(IRoleBasedModel $item, $throw = true) {
         return $this->checkAccess(self::DELETE, $item, $throw);
     }
 
+    /**
+     * check if user can update/edit $item
+     *
+     * @param IRoleBasedModel $item
+     * @return bool true if user is granted to edit $item
+     * @see can
+     */
     public function canUpdate(IRoleBasedModel $item) {
         return $this->can(self::UPDATE, $item);
     }
 
     /**
+     * check if user can $action the $item.
+     *
      * @param string $action
      * @param IRoleBasedModel $item
      * @throws CException
      * @return bool
+     * @see IRoleBasedModel::accessRules
      */
     public function can($action, IRoleBasedModel $item) {
         foreach($item->accessRules() as $rule) {
