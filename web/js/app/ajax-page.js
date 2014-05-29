@@ -149,7 +149,7 @@
 
     O.navigation.back = function() {
         if (backUrl) {
-            changePage(backUrl, {cacheOnly: true});
+            changePage(backUrl);
             return true;
         }
         else if (navigator.app && navigator.app.exitApp) {
