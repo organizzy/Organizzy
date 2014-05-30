@@ -75,6 +75,8 @@ class Controller extends CController
         if ($action->id == 'update') {
             $this->disableCache = true;
         }
+
+        return parent::beforeAction($action);
     }
 
     /**

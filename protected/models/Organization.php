@@ -80,16 +80,7 @@ class Organization extends ActiveRecord implements IRoleBasedModel
             $criteria->compare('role.status', '<>' . Role::STATUS_ARCHIVED);
         }
 
-
         return $this;
-    }
-
-    /**
-     * @scope
-     * @return $this
-     */
-    public function defaultScope() {
-        return $this->with(['logo' => ['select' => 'url']]);
     }
 
     /**
