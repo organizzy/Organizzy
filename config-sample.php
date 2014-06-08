@@ -27,6 +27,11 @@ return [
             'password' => 'password',
         ],
 
+        'mail' => [
+            'senderAddress' => 'admin@organizzy.org',
+            'senderName' => 'Organizzy Administrator',
+        ],
+
         // if you install apc on your php, uncomment these
 //        'cache' => [
 //            'class'=>'CApcCache',

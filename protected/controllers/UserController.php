@@ -69,6 +69,8 @@ class UserController extends Controller {
             if($model->validate() && $model->save()) {
                 O::app()->user->setFlash('info', O::t('organizzy', 'Register success, please login'));
                 O::app()->session->add('email', $model->email);
+                O::app()->sendMailToUser('user/register', ['model' => $model], $model->id);
+
                 $this->redirect(O::app()->user->loginUrl);
             }
         }
@@ -93,14 +95,18 @@ class UserController extends Controller {
     }
 
     public function actionAccount() {
-        $user = $this->loadModel($this->userId);
-        $user->scenario = User::SCENARIO_EDIT_ACCOUNT;
+        $model = $this->loadModel($this->userId);
+        $model->scenario = User::SCENARIO_EDIT_ACCOUNT;
+        $model->oldEmail = $model->email;
 
-        if (FormHandler::save($user)) {
+        if (FormHandler::save($model)) {
             O::app()->user->setFlash('success', 'Account updated');
+            if ($model->oldEmail != $model->email) {
+                O::app()->sendMailToUser('user/activation', ['model' => $model]);
+            }
             $this->redirect(['view']);
         }
-        $this->render('account', ['model' => $user]);
+        $this->render('account', ['model' => $model]);
     }
 
     public function actionUploadPhoto() {
@@ -118,6 +124,31 @@ class UserController extends Controller {
             $user->invalidateCache();
             $this->redirect(['view', 'id' => $this->userId]);
         }
+    }
+
+    public function actionActivate($resend = false) {
+        $model = $this->loadModel($this->userId);
+
+        if (isset($_POST['activation_code'])) {
+            if ($model->activation_code == $_POST['activation_code']) {
+                $model->status = User::STATUS_ACTIVE;
+                if ($model->save()) {
+                    O::app()->user->setFlash('success', 'Your account have been activated');
+                    $this->redirect(['view']);
+                }
+                else {
+                    throw new CHttpException(500, 'Internal Server Error');
+                }
+            } else {
+                O::app()->user->setFlash('error', 'Invalid activation code');
+            }
+        }
+        elseif ($resend) {
+            O::app()->sendMailToUser('user/activation', ['model' => $model]);
+            O::app()->user->setFlash('success', 'The activation code has been sent to ' . $model->email);
+        }
+
+        $this->render('activate', ['model' => $model]);
     }
 
     /**
