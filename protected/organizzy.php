@@ -77,6 +77,8 @@ class O extends Yii {
  * @property AccessRule $accessRule
  * @property boolean $isAjaxRequest
  *
+ * @property Mailer $mail
+ *
  * @property string $dummyPhoto
  */
 class OrganizzyApplication extends CWebApplication {
@@ -110,5 +112,19 @@ class OrganizzyApplication extends CWebApplication {
             return null;
         }
         
+    }
+
+    /**
+     * @param string $view
+     * @param array $params
+     * @param int $userId
+     */
+    public function sendMailToUser($view, $params = [], $userId = null) {
+        if (!$userId) {
+            $userId = $this->user->id;
+        }
+        $user = User::model()->findByPk($userId);
+
+        $this->mail->sendTemplate($view, $user->email, $user->name, $params);
     }
 }

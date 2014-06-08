@@ -27,6 +27,7 @@ if (O::app()->isAjaxRequest || isset($_SERVER['HTTP_ORIGIN'])) {
 $assetBase = O::app()->baseUrl;
 
 function getVersionedUrl($fileName) {
+    return O::app()->baseUrl . $fileName;
     $pos = strrpos($fileName, '.');
     return O::app()->baseUrl . substr($fileName, 0, $pos) . '-' . filemtime(O::app()->basePath . '/../web' . $fileName) . substr($fileName, $pos);
     //return O::app()->baseUrl . $fileName . '?m=' . filemtime(O::app()->basePath . '/../web' . $fileName);
@@ -50,7 +51,7 @@ function getVersionedUrl($fileName) {
 <div id="loader"></div>
 <script>window.onload=function(){var d=document,h=d.getElementsByTagName('head')[0],i=function(src, onload) {
 var j=d.createElement('script');j.src=src;if(onload)j.onload=onload;h.appendChild(j);
-};i('<?php echo $assetBase ?>/js/lib<?php if (isset($_COOKIE['cordova']) && $_COOKIE['cordova'] != '0') echo '-mobile' ?>-2.js',
+};i('<?php echo $assetBase ?>/js/lib<?php if (isset($_COOKIE['cordova']) && $_COOKIE['cordova'] != '0') echo '-mobile' ?>.js',
 function(){i('<?php echo getVersionedUrl('/js/app.js') ?>')})};</script>
 </body>
 </html>

@@ -96,6 +96,10 @@ return [
                 'lifetime' => '2592000', // 30 days
             ]
         ],
+
+        'mail' => [
+            'class' => 'Mailer'
+        ]
 	),
 
 	// application-level parameters that can be accessed

@@ -33,7 +33,7 @@
         }
     </style>
 
-    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-1.11.1.min.js"></script>
 
 </head>
 <body id="page-loading">
@@ -43,30 +43,29 @@
         <img src="images/ajax_loader.gif" class="gif" /><br />
     </td></tr>
 </table>
-
 <script>
-var Zepto = jQuery;
-jQuery(function($){
-    var serverBase = 'http://organizzy.test';
-    window.O = {
-        client: true,
-        baseServer: serverBase,
-    };
+    jQuery(function($){
+        var serverBase = ''; // 'http://m.organizzy.org'; //
+        window.O = {
+            clientVersion: 000524 // 0.5.24
+        };
 
-    var css = document.createElement('link');
-    css.rel = 'stylesheet';
-    css.href = serverBase + '/css/style.css';
+        var css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = serverBase + '/css/style.css';
 
-    var script = document.createElement('script');
-    //script.differ = true;
-    script.onreadystatechange = function(){
-        O.initPage(serverBase);
-        console.log(this);
-    };
-    script.src = serverBase + '/js/app.js';
+        var script = document.createElement('script');
+        //script.differ = true;
+        script.onload = function(){
+            O.init(serverBase);
+            console.log(this);
+        };
+        script.src = serverBase + '/js/app.js';
 
-    $('head').append(css).append(script);
-});
+        var head = $('head')[0];
+        head.appendChild(css);
+        head.appendChild(script);
+    });
 
 </script>
 </body>

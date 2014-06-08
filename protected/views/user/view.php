@@ -25,6 +25,10 @@ if ($user->id == O::app()->user->id) {
         <a href="#user-view-history" id="user-view-history-selector">History</a>
     </div>
     <div class="content-padded tab-page active" id="user-view-info">
+        <?php if ($user->id == $this->userId && !$user->getActivated()) : ?>
+            <strong>Your account has not been activated.</strong>
+            <?php echo CHtml::link(O::t('organizzy', 'Activate now'), ['activate'], ['class' => 'btn btn-block btn-primary']) ?>
+        <?php endif ?>
 
         <?php
         function showDetail($format, $value, $icon) {

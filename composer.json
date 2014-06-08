@@ -1,7 +1,8 @@
 {
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii": "1.1.*"
+        "yiisoft/yii": "1.1.*",
+        "phpmailer/phpmailer": "5.2.*"
     },
     "extra": {
         "heroku": {

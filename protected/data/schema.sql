@@ -33,7 +33,8 @@ CREATE TABLE "user"
   about text,
   photo_id bigint REFERENCES photo(id) ON DELETE SET NULL,
   register_time timestamp DEFAULT now(),
-  status user_status DEFAULT 'active',
+  status user_status DEFAULT 'email-confirm',
+  activation_code varchar (32),
   update_time timestamp DEFAULT NOW()
 );
 
@@ -54,6 +55,7 @@ CREATE TABLE organization
   description varchar(128),
   info text,
   logo_id bigint REFERENCES photo(id) ON DELETE SET NULL,
+
   create_time timestamp DEFAULT now(),
   update_time timestamp DEFAULT NOW(),
   delete_time timestamp DEFAULT NULL
@@ -66,6 +68,7 @@ CREATE TABLE department
   organization_id bigint NOT NULL REFERENCES organization (id) ON DELETE CASCADE,
   name varchar(64),
   description varchar(1024),
+
   create_time timestamp DEFAULT now(),
   update_time timestamp DEFAULT NOW(),
   delete_time timestamp DEFAULT NULL
@@ -101,6 +104,7 @@ CREATE TABLE event
   organization_id bigint REFERENCES organization (id) ON DELETE CASCADE, -- type=1,2,3
   department_id bigint REFERENCES department (id) ON DELETE CASCADE DEFAULT NULL, -- type 2
 
+  create_time timestamp DEFAULT now(),
   update_time timestamp DEFAULT NOW(),
   delete_time timestamp DEFAULT NULL
 );
@@ -117,6 +121,7 @@ CREATE TABLE event_recurrence
   end_time time,
   place varchar(256),
 
+  create_time timestamp DEFAULT now(),
   update_time timestamp DEFAULT NOW(),
   delete_time timestamp DEFAULT NULL
 );
@@ -172,6 +177,7 @@ CREATE TABLE task
   organization_id bigint REFERENCES organization (id) ON DELETE CASCADE DEFAULT NULL,
   department_id bigint REFERENCES department (id) ON DELETE CASCADE DEFAULT NULL,
 
+  create_time timestamp DEFAULT now(),
   update_time timestamp DEFAULT NOW(),
   delete_time timestamp DEFAULT NULL
 );

@@ -28,6 +28,8 @@
  * @property string $register_time
  * @property integer $status
  * @property integer $photo_id
+ * @property string $activation_code
+ * @property-readonly bool $activated
  *
  * The followings are the available model relations:
  * @property Photo $photo
@@ -52,11 +54,17 @@
 class User extends ActiveRecord
 {
 
+    const STATUS_ACTIVE = 'active';
+    const STATUS_NEED_EMAIL_CONFIRMATION = 'email-confirm';
+    const STATUS_BLOCKED = 'blocked';
+
     const SCENARIO_REGISTER = 'register';
     const SCENARIO_EDIT_ACCOUNT = 'edit';
 
     public $password1, $password2;
     public $old_password;
+
+    public $oldEmail;
 
 
 
@@ -84,6 +92,13 @@ class User extends ActiveRecord
     }
 
     /**
+     * @return bool
+     */
+    public function getActivated() {
+        return $this->status == self::STATUS_ACTIVE;
+    }
+
+    /**
      * @param $recurrent_id
      * @return $this
      */
@@ -106,6 +121,14 @@ class User extends ActiveRecord
         if ($this->password1 != '' && $this->scenario == self::SCENARIO_REGISTER || $this->scenario == self::SCENARIO_EDIT_ACCOUNT) {
             $this->password = crypt($this->password1);
         }
+
+        if ($this->scenario == self::SCENARIO_REGISTER ||
+            ($this->scenario == self::SCENARIO_EDIT_ACCOUNT && $this->oldEmail != $this->email)
+        ) {
+            $this->status = self::STATUS_NEED_EMAIL_CONFIRMATION;
+            $this->activation_code = rand(1000, 99999);
+        }
+
         return parent::beforeSave();
     }
 
