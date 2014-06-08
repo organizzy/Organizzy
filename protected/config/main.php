@@ -19,7 +19,7 @@
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
-return array(
+return [
 	'basePath' => __DIR__ .'/..',
 	'name'=>'Organizzy',
 
@@ -32,17 +32,6 @@ return array(
 		'application.components.*',
 	),
 
-	'modules'=>array(
-		// uncomment the following to enable the Gii tool
-		//*
-		'gii'=>array(
-			'class'=>'system.gii.GiiModule',
-			'password'=>'gii',
-			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1'),
-		),
-		// */
-	),
 
 	// application components
 	'components'=>array(
@@ -65,10 +54,7 @@ return array(
 
 
 		'db'=>array(
-			'connectionString' => sprintf('%s:host=%s;dbname=%s', DB_DRIVER, DB_HOST, DB_NAME),
 			'emulatePrepare' => true,
-			'username' => DB_USER,
-			'password' => DB_PASSWORD,
 			'charset' => 'utf8',
             'schemaCachingDuration'=>7200,
 		),
@@ -104,25 +90,23 @@ return array(
             'enableCookieValidation' => true,
         ],
 
-        'cache'=>array(
-            'class'=>'CApcCache',
-            'hashKey' => false,
-        ),
-
         'session' => [
-            'class' => 'CCacheHttpSession',
             'sessionName' => 'sid',
             'cookieParams' => [
                 'lifetime' => '2592000', // 30 days
             ]
         ],
 
+        'mail' => [
+            'class' => 'Mailer'
+        ]
 	),
 
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
-		// this is used in contact page
-
+		'domainName' => 'm.organizzy.org',
+        'adminEmail' => 'admin@organizzy.org',
 	),
-);
+];
+

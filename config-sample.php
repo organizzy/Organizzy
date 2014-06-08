@@ -17,10 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Rename this file to config.php, and edit it's content
+return [
+    'components' => [
 
-define('DB_DRIVER', 'pgsql');
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'organizzy');
-define('DB_USER', 'root');
-define('DB_PASSWORD', 'password');
+        // Database connection
+        'db' => [
+            'connectionString' => 'pgsql:host=localhost;dbname=organizzy',
+            'username' => 'root',
+            'password' => 'password',
+        ],
+
+        'mail' => [
+            'senderAddress' => 'admin@organizzy.org',
+            'senderName' => 'Organizzy Administrator',
+        ],
+
+        // if you install apc on your php, uncomment these
+//        'cache' => [
+//            'class'=>'CApcCache',
+//        ],
+    ],
+
+];

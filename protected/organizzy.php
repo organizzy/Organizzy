@@ -17,15 +17,57 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+defined('YII_DEBUG') or define('YII_DEBUG',true);
+defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
+
+if (YII_DEBUG) {
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+}
+
+
 /**
  * Class O
  *
  * @method static OrganizzyApplication app()
  */
 class O extends Yii {
-    public static function createOrganizzyApplication($config=null)
+
+    /**
+     * @param string|array $customConfig
+     * @return OrganizzyApplication
+     */
+    public static function createOrganizzyApplication($customConfig = null)
     {
-        return self::createApplication('OrganizzyApplication',$config);
+        $config = self::loadConfigFromCache();
+        if (!$config) {
+            $config = require(__DIR__ . '/config/main.php');
+
+            if ($customConfig) {
+                if (is_array($customConfig)) {
+                    $config = CMap::mergeArray($config, $customConfig);
+                }
+                elseif (file_exists($customConfig)) {
+                    $config = CMap::mergeArray($config, require($customConfig));
+                }
+            }
+
+            if (function_exists('apc_add')) {
+                apc_add('Organizzy:config', $config);
+            }
+        }
+
+        return self::createApplication('OrganizzyApplication' , $config);
+    }
+
+    private static function loadConfigFromCache() {
+        return null;
+        if (function_exists('apc_fetch')) {
+            return apc_fetch('Organizzy:config') ?: null;
+        }
+
+        return null;
     }
 }
 
@@ -34,6 +76,8 @@ class O extends Yii {
  *
  * @property AccessRule $accessRule
  * @property boolean $isAjaxRequest
+ *
+ * @property Mailer $mail
  *
  * @property string $dummyPhoto
  */
@@ -68,5 +112,19 @@ class OrganizzyApplication extends CWebApplication {
             return null;
         }
         
+    }
+
+    /**
+     * @param string $view
+     * @param array $params
+     * @param int $userId
+     */
+    public function sendMailToUser($view, $params = [], $userId = null) {
+        if (!$userId) {
+            $userId = $this->user->id;
+        }
+        $user = User::model()->findByPk($userId);
+
+        $this->mail->sendTemplate($view, $user->email, $user->name, $params);
     }
 }

@@ -3,7 +3,15 @@
 /* @var $this Controller */
 /* @var $organizations Organization[] */
 /* @var boolean $all */
-
+?>
+<?php if (! User::model()->findByPk($this->userId)->getActivated()) : ?>
+    <div class="content-padded">
+        <strong>Your account has not been activated.</strong>
+        <?php echo CHtml::link(O::t('organizzy', 'Activate now'), ['/user/activate'], ['class' => 'btn btn-block btn-primary']) ?>
+    </div>
+    <?php return; ?>
+<?php endif ?>
+<?php
 $jointStatuses = array(
     'Invited', 'Joint', 'Old'
 );
