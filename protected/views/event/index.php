@@ -12,4 +12,12 @@ $this->menu = [
     ['label'=>'Show All', 'url'=>array('index', 'all' => true), 'enable' => ! $all],
 ];
 
-$this->renderPartial('_list', ['models' => $models]);
+if (count($models) > 0) :
+    $this->renderPartial('_list', ['models' => $models]);
+else:
+?>
+    <div class="content-padded content-empty text-right">
+        No Event added<br />
+    </div>
+<?php endif ?>
+<p class="text-center"><?php echo CHtml::link(O::t('organizzy', 'Create new'), ['create'], ['class' => 'btn']) ?></p>
