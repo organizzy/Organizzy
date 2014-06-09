@@ -27,33 +27,34 @@ if ($all) {
     );
 }
 
+if (count($organizations) > 0) :
+    $this->widget('OListView', [
+            'models' => $organizations,
+            'linkAttr' => function($org) {
+                    /** @var Organization $org */
+                    return O::app()->createUrl('/organization/view', array('id' => $org->id));
+                },
+            'photoAttr' => function($org) {
+                    /** @var Organization $org */
+                    return $org->logo ?: O::app()->dummyPhoto;
+                },
 
-$curStatus = -1;
-$controller = $this;
+            'dividerCb' => function($org) {
+                    /** @var Organization $org */
+                    static $currentStatus = Role::STATUS_JOINT;
 
-$this->widget('OListView', [
-        'models' => $organizations,
-        'linkAttr' => function($org) {
-                /** @var Organization $org */
-                return O::app()->createUrl('/organization/view', array('id' => $org->id));
-            },
-        'photoAttr' => function($org) {
-                /** @var Organization $org */
-                return $org->logo ?: O::app()->dummyPhoto;
-        },
-
-        'dividerCb' => function($org) {
-                /** @var Organization $org */
-                static $currentStatus = Role::STATUS_JOINT;
-
-                if ($org->role->status != $currentStatus) {
-                    $currentStatus = $org->role->status;
-                    return $currentStatus;
+                    if ($org->role->status != $currentStatus) {
+                        $currentStatus = $org->role->status;
+                        return $currentStatus;
+                    }
+                    return null;
                 }
-                return null;
-            }
-    ]
-);
-return;
+        ]
+    );
 
-?>
+else : ?>
+    <div class="content-padded content-empty">
+        No Organization added<br />
+    </div>
+<?php endif ?>
+<p class="text-center"><?php echo CHtml::link(O::t('organizzy', 'Create new'), ['create'], ['class' => 'btn']) ?></p>
