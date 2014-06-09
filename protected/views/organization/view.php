@@ -65,16 +65,30 @@ if ($role->status == Role::STATUS_INVITED) {
             <p><?php echo CHtml::encode($model->info); ?></p>
         </div>
         <?php $this->renderPartial('//role/_list', ['rules' => $model->adminsRole, 'canEdit' => $role->isSuperAdmin]) ?>
+        <p class="text-center">
+            <?php if ($role->isAdmin) echo CHtml::link(O::t('organizzy', 'Invite Admin'), ['/role/invite', 'id' => $model->id], ['class' => 'btn']) ?>
+        </p>
     <?php $tabView->endPage(); ?>
 
     <?php $tabView->beginPage('Department', [], 'tab-department'); ?>
         <?php $this->renderPartial('//department/_list', ['departments' => $model->departments ]) ?>
+        <p class="text-center">
+            <?php if ($role->isAdmin) echo CHtml::link(O::t('organizzy', 'Add Department'), ['/department/create', 'oid' => $model->id], ['class' => 'btn']) ?>
+        </p>
     <?php $tabView->endPage(); ?>
 
     <?php $tabView->beginPage('Events', [], 'tab-event'); ?>
-        <?php
-        $this->renderPartial('//event/_list', ['models' => Event::model()->onlyOrganization($model->id, $role->isSuperAdmin)->findAll()]);
-        ?>
+        <?php if (count($events = Event::model()->onlyOrganization($model->id, $role->isSuperAdmin)->findAll()) > 0): ?>
+        <?php $this->renderPartial('//event/_list', ['models' => $events]); ?>
+        <?php else: ?>
+            <div class="content-padded content-empty text-right">
+                No Event added<br />
+            </div>
+        <?php endif ?>
+        <p class="text-center">
+            <?php if ($role->isAdmin) echo CHtml::link(O::t('organizzy', 'Add Event'),
+                ['/event/create', 'oid' => $model->id, 'type' => Event::TYPE_ORGANIZATION], ['class' => 'btn']) ?>
+        </p>
     <?php $tabView->endPage(); ?>
 
 <?php $this->endWidget() ?>
