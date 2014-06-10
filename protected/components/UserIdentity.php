@@ -39,7 +39,7 @@ class UserIdentity extends CUserIdentity
 	{
 
         /** @var User $user */
-        $user = User::model()->find('email = :email AND status = \'active\' ', array(':email' => $this->username));
+        $user = User::model()->find('email = :email', array(':email' => $this->username));
         if ($user) {
             if ($user->password == crypt($this->password, $user->password)) {
                 $this->userId = $user->id;
