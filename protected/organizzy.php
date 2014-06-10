@@ -26,6 +26,8 @@ if (YII_DEBUG) {
     error_reporting(E_ALL);
 }
 
+Yii::setPathOfAlias('lib', __DIR__ . '/../lib');
+Yii::setPathOfAlias('vendor', __DIR__ . '/../vendor');
 
 /**
  * Class O

@@ -99,6 +99,19 @@ class User extends ActiveRecord
     }
 
     /**
+     * Find user by it's email
+     *
+     * @param string $email the email address
+     * @param string $condition
+     * @param array $params
+     * @return User
+     * @see CActiveRecord::findByAttributes
+     */
+    public function findByEmail($email, $condition = '', $params = []) {
+        return $this->findByAttributes(['email' => $email], $condition, $params);
+    }
+
+    /**
      * @param $recurrent_id
      * @return $this
      */
