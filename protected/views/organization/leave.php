@@ -4,16 +4,16 @@
 /* @var $lastAdmin boolean */
 
 $this->layoutSingle();
-$this->pageTitle = 'Leave Organization';
+$this->pageTitle = _t('Leave Organization');
 $this->backUrl = $this->createUrl('view', array('id' => $model->id));
 ?>
 <?php if ($lastAdmin): ?>
     <div class="content-padded">
-        <p>You can't leave this organization because you are the last admin of this organization</p>
+        <p><?php _p('You can nott leave this organization because you are the last admin of this organization') ?></p>
     </div>
 <?php else: ?>
 <div class="content-padded">
-    <p><?php printf(O::t('organizzy', 'Are you sure you want to leave %s'), '<b>' . $model->name . '</b>') ?></p>
+    <p><?php _p('Are you sure you want to leave {name}', ['{name}' => '<b>' . $model->name . '</b>']) ?></p>
     <form method="post">
         <?php echo CHtml::hiddenField('leave', 1) ?>
         <?php echo CHtml::submitButton('Leave', array('class' => 'btn btn-block btn-primary')) ?>

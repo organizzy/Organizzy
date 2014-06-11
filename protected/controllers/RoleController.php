@@ -71,7 +71,7 @@ class RoleController extends Controller {
 
         if(FormHandler::save($model))
         {
-            O::app()->user->setFlash('success', 'Invitation sent');
+            O::app()->user->setFlash('success', _t('Invitation sent'));
             $this->redirect($this->backUrl);
         }
 
@@ -99,7 +99,7 @@ class RoleController extends Controller {
 
         if(FormHandler::save($model))
         {
-            O::app()->user->setFlash('success', 'Action done');
+            O::app()->user->setFlash('success', _t('Action done'));
             $this->redirect($this->backUrl);
         }
 

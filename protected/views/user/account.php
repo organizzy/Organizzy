@@ -4,17 +4,11 @@
 /* @var $form CActiveForm */
 
 $this->layoutSingle(array('view'));
-$this->pageTitle = 'Edit Account'
+$this->pageTitle = _t('Edit Account')
 
 ?>
 <div class="content-padded">
-    <?php $form=$this->beginWidget('CActiveForm', array(
-            'id'=>'user-register',
-            'enableClientValidation'=>false,
-            'clientOptions'=>array(
-                'validateOnSubmit'=>false,
-            ),
-        )); ?>
+    <?php $form=$this->beginWidget('CActiveForm'); ?>
 
     <?php echo $form->errorSummary($model); ?>
 
@@ -32,7 +26,7 @@ $this->pageTitle = 'Edit Account'
     </div>
 
     <div class="row input">
-        <?php echo $form->label($model,'password1'); ?>
+        <?php echo $form->label($model,'password1', ['label' => _t('New Password')]); ?>
         <?php echo $form->passwordField($model,'password1'); ?>
         <?php echo $form->error($model,'password1'); ?>
     </div>
@@ -43,7 +37,7 @@ $this->pageTitle = 'Edit Account'
         <?php echo $form->error($model,'password2'); ?>
     </div>
 
-    <button type="submit" class="btn btn-block"><?php echo O::t('organizzy', 'Update Account') ?></button>
+    <button type="submit" class="btn btn-block"><?php _p('Update Account') ?></button>
 </div>
 
 

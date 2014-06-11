@@ -6,16 +6,9 @@
 
 <div class="form content-padded">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'organization-form',
-	// Please note: When you enable ajax validation, make sure the corresponding
-	// controller action is handling ajax validation correctly.
-	// There is a call to performAjaxValidation() commented in generated controller code.
-	// See class documentation of CActiveForm for details on this.
-	'enableAjaxValidation'=>false,
-)); ?>
+<?php $form=$this->beginWidget('CActiveForm'); ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
+	<p class="note"><?php _p('Fields with {*} are required.', ['{*}' => '<span class="required">*</span>']); ?></p>
 
 	<?php echo $form->errorSummary($model); ?>
 
@@ -34,7 +27,7 @@
     <?php if ($model->scenario == 'create'): ?>
         <?php
         $role = new Role();
-        echo $form->labelEx($role, 'position', ['label' => O::t('organizzy', 'My Role')]);
+        echo $form->labelEx($role, 'position', ['label' => _t('My Role')]);
         $this->renderPartial('//role/_position', ['model' => $role]);
         ?>
     <?php else: ?>
@@ -46,7 +39,7 @@
     <?php endif ?>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'btn btn-block btn-primary')); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? _t('Create') : _t('Save'), array('class' => 'btn btn-block btn-primary')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

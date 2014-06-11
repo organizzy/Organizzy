@@ -7,13 +7,7 @@ $this->pageTitle = $model->name;
 $this->layoutSingle(['view']);
 ?>
 <div class="content-padded">
-    <?php $form=$this->beginWidget('CActiveForm', array(
-            'id'=>'user-edit',
-            'enableClientValidation'=>false,
-            'clientOptions'=>array(
-                'validateOnSubmit'=>false,
-            ),
-        ));  ?>
+    <?php $form=$this->beginWidget('CActiveForm');  ?>
 
     <?php echo $form->errorSummary($model); ?>
 
@@ -47,7 +41,7 @@ $this->layoutSingle(['view']);
         <?php echo $form->error($model,'aboutMe'); ?>
     </div>
 
-    <button type="submit" class="btn btn-block"><?php echo O::t('organizzy', 'Update') ?></button>
+    <button type="submit" class="btn btn-block"><?php _p('Update') ?></button>
 </div>
 
 

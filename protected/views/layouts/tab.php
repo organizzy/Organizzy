@@ -3,11 +3,11 @@
 /* @var string $content */
 
 $menu = [
-    array('icon' => 'home', 'id' => 'activity', 'link' => '/activity/index', 'label' => Yii::t('organizzy', 'Home')),
-    array('icon' => 'group', 'id' => 'organization', 'link' => '/organization/index', 'label' => Yii::t('organizzy', 'Org')),
-    array('icon' => 'clock-o', 'id' => 'event', 'link' => '/event/index', 'label' => Yii::t('organizzy', 'Event')),
-    array('icon' => 'tasks', 'id' => 'task', 'link' => '/task/index', 'label' => Yii::t('organizzy', 'Task')),
-    array('icon' => 'ellipsis-v', 'id' => '-', 'link' => '#', 'label' => Yii::t('organizzy', 'More')),
+    array('icon' => 'home', 'id' => 'activity', 'link' => '/activity/index', 'label' => _t('Home')),
+    array('icon' => 'group', 'id' => 'organization', 'link' => '/organization/index', 'label' => _t('Org')),
+    array('icon' => 'clock-o', 'id' => 'event', 'link' => '/event/index', 'label' => _t('Event')),
+    array('icon' => 'tasks', 'id' => 'task', 'link' => '/task/index', 'label' => _t('Task')),
+    array('icon' => 'ellipsis-v', 'id' => '-', 'link' => '#', 'label' => _t('More')),
 ];
 
 ?>
@@ -26,9 +26,9 @@ $menu = [
 <?php
 $menu = $this->menu;
 if ($menu) $menu[] = 'User';
-$menu[] = array('label' => O::t('organizzy', 'Profile'),
+$menu[] = array('label' => _t('Profile'),
                 'url' => CHtml::normalizeUrl(['/user/view', 'id' => O::app()->user->id]) . '#return=' . urlencode(O::app()->request->url));
-$menu[] = array('label' => O::t('organizzy', 'Log Out'), 'url' => array('/user/logout'));
+$menu[] = array('label' => _t('Log Out'), 'url' => array('/user/logout'));
 $this->renderPartial('//layouts/_menu', array('menu' => $menu));
 ?>
 

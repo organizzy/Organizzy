@@ -74,9 +74,9 @@ class TaskController extends Controller {
         if (isset($_POST['confirm'])) {
             $backUrl = $this->getBackUrlByModel($model);
             if ($model->delete()) {
-                O::app()->user->setFlash('success', 'Task has been deleted');
+                O::app()->user->setFlash('success', _t('Task has been deleted'));
             } else {
-                O::app()->user->setFlash('error', 'Task to delete event');
+                O::app()->user->setFlash('error', _t('Task to delete event'));
             }
 
             $this->redirect($backUrl);
@@ -120,7 +120,7 @@ class TaskController extends Controller {
     private function loadModel($id) {
         $model = Task::model()->findByPk($id);
         if (!$model) {
-            throw new CHttpException(404);
+            throw new CHttpException(404,_t('The requested page does not exist.'));
         }
         return $model;
     }

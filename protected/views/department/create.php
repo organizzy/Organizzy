@@ -3,7 +3,7 @@
 /* @var $model Department */
 
 $this->layoutSingle($this->createUrl('/organization/view', ['id' => $model->organization_id]));
-$this->pageTitle = O::t('organizzy', 'Create Department');
+$this->pageTitle = _t('Add Department');
 ?>
 
 <?php //echo $model->organization->name ?>

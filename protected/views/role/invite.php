@@ -3,8 +3,10 @@
 /* @var $model Role */
 /* @var $form CActiveForm */
 
+if ($model->department_id) $back = ['/department/view', 'id' => $model->department_id];
+else $back = ['/organization/view', 'id' => $model->organization_id];
 $this->layoutSingle();
-$this->pageTitle = 'Invite Member';
+$this->pageTitle = _t('Invite Member');
 
 ?>
 <div class="content-padded">

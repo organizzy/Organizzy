@@ -5,7 +5,7 @@
  * @var EventRecurrence $model
  */
 $this->layoutSingle(array('view', 'id' => $model->event_id, 'rid' => $model->id));
-$this->pageTitle = 'Add Recurrence'
+$this->pageTitle = _t('Add Recurrence')
 ?>
 <div class="content-padded">
     <?php $this->renderPartial('_form_recurrence', ['model' => $model]); ?>

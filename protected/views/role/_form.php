@@ -4,14 +4,7 @@
 /* @var $form CActiveForm */
 
 ?>
-<?php $form=$this->beginWidget('CActiveForm', array(
-        'id'=>'organization-form',
-        // Please note: When you enable ajax validation, make sure the corresponding
-        // controller action is handling ajax validation correctly.
-        // There is a call to performAjaxValidation() commented in generated controller code.
-        // See class documentation of CActiveForm for details on this.
-        'enableAjaxValidation'=>false,
-    )); ?>
+<?php $form=$this->beginWidget('CActiveForm'); ?>
 
     <?php if ($model->isNewRecord): ?>
     <div class="row input">
@@ -48,8 +41,8 @@
 
     <div class="row buttons">
         <?php echo CHtml::submitButton(
-            $model->isNewRecord ? sprintf(O::t('organizzy', 'Invite to %s'), $model->organization->name) :
-                O::t('organizzy', 'Save'),
+            $model->isNewRecord ? _t('Invite to {organization}', ['{organization}' => $model->organization->name]) :
+                _t('Save'),
             array('class' => 'btn btn-block btn-primary')); ?>
     </div>
 

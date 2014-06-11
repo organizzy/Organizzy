@@ -16,8 +16,8 @@ if (count($models) > 0) :
     $this->renderPartial('_list', ['models' => $models]);
 else:
 ?>
-    <div class="content-padded content-empty text-right">
-        No Event added<br />
+    <div class="content-padded content-empty">
+        <?php _p('No event added'); ?>
     </div>
 <?php endif ?>
-<p class="text-center"><?php echo CHtml::link(O::t('organizzy', 'Create new'), ['create'], ['class' => 'btn']) ?></p>
+<p class="text-center"><?php echo CHtml::link(_t('Create new'), ['create'], ['class' => 'btn']) ?></p>

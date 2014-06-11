@@ -165,7 +165,7 @@ class AccessRule {
         if ($this->can($action, $item)) {
             return true;
         } elseif ($throwError) {
-            throw new CHttpException(403, 'Access Denied');
+            throw new CHttpException(403, _t('Access Denied'));
         } else {
             return false;
         }

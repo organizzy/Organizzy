@@ -26,6 +26,22 @@ if (YII_DEBUG) {
     error_reporting(E_ALL);
 }
 
+/**
+ * @param string $msg
+ * @param array $params
+ * @return string
+ */
+function _t($msg, $params = []) {
+    return O::t('organizzy', $msg, $params);
+}
+
+/**
+ * @param string $msg
+ * @param array $params
+ */
+function _p($msg, $params = []) {
+    echo O::t('organizzy', $msg, $params);
+}
 
 /**
  * Class O
