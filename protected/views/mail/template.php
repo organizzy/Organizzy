@@ -40,8 +40,7 @@
 </div>
 <div id="footer">
     <p class="regards">
-        Regards<br/>
-        Organizzy Team
+        <?php _p('Regards<br />Organizzy Team') ?>
     </p>
     <p>
         <?php _p('Follow us on {twitter}', ['{twitter}' => CHtml::link('@OrganizzyApp', 'http://twitter.com/OrganizzyApp')]) ?>
