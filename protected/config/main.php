@@ -22,8 +22,7 @@
 return [
 	'basePath' => __DIR__ .'/..',
 	'name'=>'Organizzy',
-    'sourceLanguage' => 'en',
-    'language' => 'id_ID',
+    'sourceLanguage' => 'en_US',
 
 	// preloading 'log' component
 	'preload'=>array('log'),

@@ -99,6 +99,44 @@ class O extends Yii {
  */
 class OrganizzyApplication extends CWebApplication {
 
+    public static $supportedLocale = [
+        'en' => 'en_US',
+        'en_US' => 'en_US',
+        'en_US.UTF-8' => 'en_US',
+
+        'id' => 'id_ID',
+        'id_ID' => 'id_ID',
+        'id_ID.UTF-8' => 'id_ID',
+    ];
+
+    /**
+     * Organizzy custom initialization
+     */
+    protected function init() {
+        parent::init();
+        $this->initLanguage();
+    }
+
+    private function initLanguage() {
+        $lang = null;
+        if (!$lang && isset($_COOKIE['l']) && isset(self::$supportedLocale[$_COOKIE['l']])) {
+            $lang = self::$supportedLocale[$_COOKIE['l']];
+        }
+        if (!$lang && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            foreach(explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $acceptLang) {
+                $tmp = explode(';', $acceptLang);
+                if (isset(self::$supportedLocale[$tmp[0]])) {
+                    $lang = self::$supportedLocale[$tmp[0]];
+                    break;
+                }
+            }
+        }
+
+        if ($lang) {
+            $this->setLanguage($lang);
+        }
+    }
+
     /** @var AccessRule */
     private $_accessRule = null;
 
