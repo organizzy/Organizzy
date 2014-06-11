@@ -29,6 +29,7 @@ if ($menu) $menu[] = 'User';
 $menu[] = array('label' => _t('Profile'),
                 'url' => CHtml::normalizeUrl(['/user/view', 'id' => O::app()->user->id]) . '#return=' . urlencode(O::app()->request->url));
 $menu[] = array('label' => _t('Log Out'), 'url' => array('/user/logout'));
+$menu[] = ['label' => _t('Setting'), 'url' => ['/site/setting']];
 $this->renderPartial('//layouts/_menu', array('menu' => $menu));
 ?>
 
