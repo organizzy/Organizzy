@@ -106,11 +106,9 @@ class Department extends ActiveRecord implements IRoleBasedModel
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'organization_id' => 'Organization',
-			'name' => 'Name',
-			'description' => 'Description',
-			'create_time' => 'Create Time',
+			'name' => _t('Name'),
+			'description' => _t('Description'),
+			'create_time' => _t('Create Time'),
 		);
 	}
 

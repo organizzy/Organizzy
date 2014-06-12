@@ -11,13 +11,17 @@
 $canUpdate = O::app()->accessRule->canUpdate($model);
 if ($canUpdate) {
     $this->menu=array(
-        ['label'=>'Add Recurrence', 'url'=>['addRecurrence', 'id'=>$model->id]],
-        ['label' => 'Edit Time', 'url' => ['editRecurrence', 'id' => $model->id, 'rid' => $recurrence->id],
+        ['label' => _t('Add Recurrence'), 'url'=>['addRecurrence', 'id'=>$model->id]],
+        ['label' => _t('Edit Time'), 'url' => ['editRecurrence', 'id' => $model->id, 'rid' => $recurrence->id],
             'enable' => $model->numRecurrence == 1],
         'Event',
-        array('label'=>'Edit', 'url'=>array('update', 'id'=>$model->id)),
-        array('label'=>'Delete', 'url'=>array('delete', 'id'=>$model->id),
-              'options' => ['class' => 'btn-post', 'data-post' => 'confirm=1', 'data-ask' => 'Are you sure?']),
+        ['label'=>_t('Edit'), 'url'=>array('update', 'id'=>$model->id)],
+        ['label'=>_t('Delete'), 'url'=>array('delete', 'id'=>$model->id),
+              'options' => [
+                  'class' => 'btn-post', 'data-post' => 'confirm=1',
+                  'data-ask' => _t('Delete event {event}?', ['{event}' => $model->title])
+              ]
+        ],
     );
 }
 
@@ -37,10 +41,10 @@ $this->pageTitle = $model->getTypeDescription();
         <?php echo CHtml::dropDownList('rid', $recurrence->id, $model->recurrences,
             ['onchange' => '$(this.form).submit()', 'style'=>'margin-bottom:5px']) ?>
         <p style="text-align: right">
-            <?php echo CHtml::link('Edit', ['editRecurrence', 'id' => $model->id, 'rid' => $recurrence->id],
+            <?php echo CHtml::link(_t('Edit'), ['editRecurrence', 'id' => $model->id, 'rid' => $recurrence->id],
                 ['class' => 'btn btn-primary']) ?>
-            <?php echo CHtml::link('Delete', ['deleteRecurrence', 'id' => $model->id, 'rid' => $recurrence->id],
-                ['class' => 'btn btn-post', 'data-post' => '{confirm=1}', 'data-ask' => 'Delete this recurrence?']) ?>
+            <?php echo CHtml::link(_t('Delete'), ['deleteRecurrence', 'id' => $model->id, 'rid' => $recurrence->id],
+                ['class' => 'btn btn-post', 'data-post' => '{confirm=1}', 'data-ask' => _t('Delete this recurrence?')]) ?>
         </p>
         <?php echo CHtml::endForm(); ?>
     <?php endif ?>
@@ -48,7 +52,7 @@ $this->pageTitle = $model->getTypeDescription();
 </div>
 
 <?php $tabView = $this->beginWidget('OTabView', ['id' => 'organization-view']); ?>
-    <?php $tabView->beginPage('Details'); ?>
+    <?php $tabView->beginPage(_t('Details')); ?>
     <div class="content-padded">
         <?php $this->renderPartial('_detail', ['model' => $model, 'recurrence' => $recurrence ]) ?>
     </div>
@@ -60,7 +64,7 @@ $this->pageTitle = $model->getTypeDescription();
         $myAttendance = isset($users[$this->userId]) ? $users[$this->userId]->attendance : null;
         ?>
 
-        <?php $tabView->beginPage('Attendance'); ?>
+        <?php $tabView->beginPage(_t('Attendance')); ?>
             <?php if (isset($users[$this->userId]) && $recurrence->date >= date('Y-m-d')) : ?>
                 <div class="content-padded">
                     <?php $this->renderPartial('_confirm',[

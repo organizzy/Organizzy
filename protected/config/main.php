@@ -22,6 +22,7 @@
 return [
 	'basePath' => __DIR__ .'/..',
 	'name'=>'Organizzy',
+    'sourceLanguage' => 'en_US',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -63,6 +64,11 @@ return [
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
 		),
+
+        'messages' => [
+            'class' => 'CPhpMessageSource',
+            'cachingDuration' => YII_DEBUG ? 60 : 3600,
+        ],
 
 		'log'=>array(
 			'class'=>'CLogRouter',

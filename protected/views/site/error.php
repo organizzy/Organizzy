@@ -2,7 +2,7 @@
 /* @var $this SiteController */
 /* @var $error array */
 
-$this->pageTitle = 'Error';
+$this->pageTitle = _t('Error');
 $this->layout = '//layouts/single'
 ?>
 <div class="content-padded">

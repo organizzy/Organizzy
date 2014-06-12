@@ -83,11 +83,12 @@ class Event extends ActiveRecord implements IRoleBasedModel
      * @return string
      */
     public function getTypeDescription($type = null) {
-        static $types = [
-            self::TYPE_PERSONAL => 'Personal Event',
-            self::TYPE_DEPARTMENT => 'Department\'s Event',
-            self::TYPE_ORGANIZATION => 'Organization\'s Event',
-            self::TYPE_ADMINS => 'Manager\'s Event',
+        static $types = null;
+        if ($type == null) $type = [
+            self::TYPE_PERSONAL => _t('Personal Event'),
+            self::TYPE_DEPARTMENT => _t('Department\'s Event'),
+            self::TYPE_ORGANIZATION => _t('Organization\'s Event'),
+            self::TYPE_ADMINS => _t('Manager\'s Event'),
         ];
         return $types[$type ?: $this->type];
     }
@@ -194,13 +195,8 @@ class Event extends ActiveRecord implements IRoleBasedModel
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'title' => 'Title',
-			'description' => 'Description',
-			'type' => 'Type',
-			'owner_id' => 'Owner',
-			'organization_id' => 'Organization',
-			'department_id' => 'Department',
+			'title' => _t('Title'),
+			'description' => _t('Description'),
 		);
 	}
 

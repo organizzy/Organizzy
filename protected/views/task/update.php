@@ -7,7 +7,7 @@
 
 
 $this->layoutSingle(['view', 'id' => $model->id]);
-$this->pageTitle = 'Edit Task';
+$this->pageTitle = _t('Edit Task');
 
 ?>
 <div class="content-padded">

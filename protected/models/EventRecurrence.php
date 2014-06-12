@@ -78,10 +78,10 @@ class EventRecurrence extends ActiveRecord
         $nowDate = date('Y-m-d');
         $nowTime = date('H:i:s');
         if ($this->date < $nowDate) {
-            $this->addError('date', O::t('organizzy', '{attribute} can not be past', ['{attribute}' => 'Date']));
+            $this->addError('date', _t('{attribute} can not be past', ['{attribute}' => 'Date']));
         }
         elseif ($this->date == $nowDate && $this->begin_time < $nowTime) {
-            $this->addError('begin_time', O::t('organizzy', '{attribute} can not be past', ['{attribute}' => 'Begin Time']));
+            $this->addError('begin_time', _t('{attribute} can not be past', ['{attribute}' => 'Begin Time']));
         }
     }
 
@@ -107,12 +107,9 @@ class EventRecurrence extends ActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'event_id' => 'Event',
-			'vote_status' => 'Vote Status',
-			'date' => 'Date',
-			'begin_time' => 'Begin Time',
-			'end_time' => 'End Time',
+			'date' => _t('Date'),
+			'begin_time' => _t('Begin Time'),
+			'end_time' => _t('End Time'),
 		);
 	}
 

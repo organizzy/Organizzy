@@ -4,17 +4,11 @@
 /* @var $form CActiveForm */
 
 $this->layoutSingle(array('login'));
-$this->pageTitle = 'Register'
+$this->pageTitle = _t('Register')
 
 ?>
 <div class="content-padded">
-<?php $form=$this->beginWidget('CActiveForm', array(
-        'id'=>'user-register',
-        'enableClientValidation'=>false,
-        'clientOptions'=>array(
-            'validateOnSubmit'=>false,
-        ),
-    )); ?>
+<?php $form=$this->beginWidget('CActiveForm'); ?>
 
 <?php echo $form->errorSummary($model); ?>
 
@@ -43,7 +37,7 @@ $this->pageTitle = 'Register'
     <?php echo $form->error($model,'name'); ?>
 </div>
 
-    <button type="submit" class="btn btn-block"><?php echo O::t('organizzy', 'Register') ?></button>
+    <button type="submit" class="btn btn-block"><?php _p('Register') ?></button>
 </div>
 
 

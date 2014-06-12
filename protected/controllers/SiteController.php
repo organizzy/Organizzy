@@ -45,6 +45,15 @@ class SiteController extends Controller
         //$this->redirect($url);
 	}
 
+    /**
+     * Global setting
+     */
+    public function actionSetting() {
+        $model = new SettingForm();
+        FormHandler::saveRedirect($model, ['index']);
+        $this->render('setting', ['model' => $model]);
+    }
+
 	/**
 	 * This is the action to handle external exceptions.
 	 */

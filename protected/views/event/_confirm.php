@@ -9,7 +9,7 @@ $form = $this->beginWidget('CActiveForm', [
     ])
 ?>
     <div class="row cb-toggle">
-        <?php echo $form->labelEx($model, 'status', ['label' => 'Attend?'] ) ?>
+        <?php echo $form->labelEx($model, 'status', ['label' => _t('Attend?')] ) ?>
         <?php /* echo $form->radioButtonList($model, 'status', [
                 EventAttendance::STATUS_ATTEND => 'Attend',
                 EventAttendance::STATUS_NOT_ATTEND => 'Not Attend',
@@ -21,6 +21,6 @@ $form = $this->beginWidget('CActiveForm', [
         <?php echo $form->textArea($model, 'comment'); ?>
     </div>
     <div class="row row-button" style="text-align: right; width: 200px">
-        <?php echo CHtml::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
+        <?php echo CHtml::submitButton(_t('Submit'), ['class' => 'btn btn-primary']) ?>
     </div>
 <?php $this->endWidget(); ?>

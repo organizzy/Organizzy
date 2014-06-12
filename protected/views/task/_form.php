@@ -8,13 +8,10 @@
 ?>
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-        'id'=>'task-form',
-        'enableAjaxValidation'=>false,
-    )); ?>
-<p class="note">Fields with <span class="required">*</span> are required.</p>
+<?php $form=$this->beginWidget('CActiveForm'); ?>
+    <p class="note"><?php _p('Fields with {*} are required.', ['{*}' => '<span class="required">*</span>']); ?></p>
 
-<?php echo $form->errorSummary($model); ?>
+    <?php echo $form->errorSummary($model); ?>
 
     <div class="row input">
         <?php echo $form->labelEx($model,'title'); ?>
@@ -42,7 +39,7 @@
 
 <?php if ($model->department_id) : ?>
     <div class="row">
-        <h4>Assign to:</h4>
+        <h4><?php _t('Assign to:') ?></h4>
         <ul class="table-view table-view-check">
 
             <?php foreach(User::model()->findAll([
@@ -62,7 +59,7 @@
     </div>
 <?php endif ?>
 <div class="row buttons">
-    <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'btn btn-block btn-primary')); ?>
+    <?php echo CHtml::submitButton($model->isNewRecord ? _t('Create') : _t('Save'), array('class' => 'btn btn-block btn-primary')); ?>
 </div>
 
 <?php $this->endWidget(); ?>

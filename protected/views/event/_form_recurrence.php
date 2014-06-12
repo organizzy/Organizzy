@@ -5,10 +5,7 @@
 
 $createForm = !isset($form);
 ?>
-<?php if ($createForm) $form=$this->beginWidget('CActiveForm', array(
-        'id'=>'event-form',
-        'enableAjaxValidation'=>false,
-    )); ?>
+<?php if ($createForm) $form=$this->beginWidget('CActiveForm'); ?>
 <?php if ($createForm) echo $form->errorSummary($model); ?>
     <div class="row input">
         <?php echo $form->labelEx($model,'place'); ?>
@@ -16,14 +13,6 @@ $createForm = !isset($form);
         <?php echo $form->error($model,'place'); ?>
     </div>
 
-    <!--div class="row input cb-toggle">
-        <?php echo $form->labelEx($model, 'vote_status') ?>
-        <?php echo $form->checkBox($model, 'vote_status', [
-                'value' => EventRecurrence::VOTE_OPEN,
-                'uncheckValue' => EventRecurrence::VOTE_CLOSED,
-                'onchange' => '$("#recurrence-time").attr("class",this.checked?"vote-time":"fixed-time")',
-            ]); ?>
-    </div -->
     <div id="recurrence-time" class="fixed-time">
         <div id="fixed-time">
             <div class="row">
@@ -49,7 +38,7 @@ $createForm = !isset($form);
     </div>
 <?php if ($createForm): ?>
     <div class="row buttons">
-        <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'btn btn-block btn-primary')); ?>
+        <?php echo CHtml::submitButton($model->isNewRecord ? _t('Create') : _t('Save'), array('class' => 'btn btn-block btn-primary')); ?>
     </div>
 <?php $this->endWidget();
 endif ?>
