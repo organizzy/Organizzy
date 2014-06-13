@@ -24,7 +24,7 @@ class UserController extends Controller {
     public function actionLogin()
     {
         if (!O::app()->user->isGuest ){
-            $this->redirect(O::app()->user->returnUrl);
+            $this->redirect(['/activity/index']);
         }
 
         $model=new LoginForm;

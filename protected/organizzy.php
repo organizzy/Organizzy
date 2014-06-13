@@ -166,15 +166,17 @@ class OrganizzyApplication extends CWebApplication {
     /**
      *
      * @return bool
+     * todo: remove this method
      */
     public function getIsAjaxRequest() {
-        return $this->getClientVersion() != null || $this->request->getIsAjaxRequest();
+        return true; // $this->getClientVersion() != null || $this->request->getIsAjaxRequest();
     }
 
     /**
      * Get current version of mobile apps used via User-Agent HTTP header
      *
      * @return string version string
+     * todo: remove this method
      */
     public function getClientVersion() {
         

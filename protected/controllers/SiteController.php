@@ -22,27 +22,29 @@
  */
 class SiteController extends Controller
 {
+    /**
+     * @param string $v client version
+     */
+    public function actionBoot($v = null) {
+        if (O_DEBUG) {
+            setcookie('XDEBUG_SESSION', 'XDEBUG', null, O::app()->baseUrl);
+        }
+        if (O::app()->user->isGuest) {
+            $this->redirect(array('/user/login'));
 
-	/**
+        } else {
+            $this->redirect(array('/activity/index'));
+        }
+    }
+
+
+    /**
 	 * This is the default 'index' action that is invoked
 	 * when an action is not explicitly requested by users.
 	 */
 	public function actionIndex()
 	{
-	    //$url = $this->actionParams;
-	    
-	    if (isset($_GET['cordova'])) {
-	        setcookie('cordova', $_GET['cordova']);
-	    }
-	    
-		if (O::app()->user->isGuest) {
-            $this->redirect(array('/user/login'));
-
-        } else {
-            $this->redirect(array('/activity'));
-        }
-        
-        //$this->redirect($url);
+	    $this->redirect(O::app()->baseUrl . '/index.html', true, 301);
 	}
 
     /**
@@ -50,7 +52,7 @@ class SiteController extends Controller
      */
     public function actionSetting() {
         $model = new SettingForm();
-        FormHandler::saveRedirect($model, ['index']);
+        FormHandler::saveRedirect($model, ['/activity/index']);
         $this->render('setting', ['model' => $model]);
     }
 
