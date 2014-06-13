@@ -18,10 +18,10 @@
  */
 
 
-defined('YII_DEBUG') or define('YII_DEBUG',true);
-defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
+if (O_DEBUG) {
+    defined('YII_DEBUG') or define('YII_DEBUG', true);
+    defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
 
-if (YII_DEBUG) {
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 }
@@ -77,8 +77,14 @@ class O extends Yii {
         return self::createApplication('OrganizzyApplication' , $config);
     }
 
+    /**
+     * load application configuration from apc cache
+     *
+     * @return array|null
+     */
     private static function loadConfigFromCache() {
-        return null;
+        if (O_DEBUG)
+            return null;
         if (function_exists('apc_fetch')) {
             return apc_fetch('Organizzy:config') ?: null;
         }
@@ -140,6 +146,9 @@ class OrganizzyApplication extends CWebApplication {
     /** @var AccessRule */
     private $_accessRule = null;
 
+    /**
+     * @return string url to dummy photo
+     */
     public function getDummyPhoto() {
         return $this->getBaseUrl(true) . '/images/dummy_person.gif';
     }
@@ -154,10 +163,19 @@ class OrganizzyApplication extends CWebApplication {
         return $this->_accessRule;
     }
 
+    /**
+     *
+     * @return bool
+     */
     public function getIsAjaxRequest() {
         return $this->getClientVersion() != null || $this->request->getIsAjaxRequest();
     }
-    
+
+    /**
+     * Get current version of mobile apps used via User-Agent HTTP header
+     *
+     * @return string version string
+     */
     public function getClientVersion() {
         
         if (preg_match('#OrganizzyMobile/(\S+)#i',  $_SERVER['HTTP_USER_AGENT'], $m) > 0) {
