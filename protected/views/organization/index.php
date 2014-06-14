@@ -6,15 +6,12 @@
 ?>
 <?php if (! User::model()->findByPk($this->userId)->getActivated()) : ?>
     <div class="content-padded">
-        <strong>Your account has not been activated.</strong>
-        <?php echo CHtml::link(O::t('organizzy', 'Activate now'), ['/user/activate'], ['class' => 'btn btn-block btn-primary']) ?>
+        <strong><?php _p('Your account has not been activated'); ?></strong>
+        <?php echo CHtml::link(_t('Activate now'), ['/user/activate'], ['class' => 'btn btn-block btn-primary']) ?>
     </div>
     <?php return; ?>
 <?php endif ?>
 <?php
-$jointStatuses = array(
-    'Invited', 'Joint', 'Old'
-);
 
 if ($all) {
     $this->layoutSingle(['index']);
@@ -22,8 +19,8 @@ if ($all) {
 } else {
     $this->menu = array(
         'Organization',
-        ['label' => O::t('organizzy', 'Show All'), 'url' => ['index', 'all' => true]],
-        ['label' => O::t('organizzy', 'Create New'), 'url' => array('create')],
+        ['label' => _t('Show All'), 'url' => ['index', 'all' => true]],
+        ['label' => _t('Create New'), 'url' => array('create')],
     );
 }
 
@@ -45,7 +42,18 @@ if (count($organizations) > 0) :
 
                     if ($org->role->status != $currentStatus) {
                         $currentStatus = $org->role->status;
-                        return $currentStatus;
+
+                        switch($currentStatus) {
+                            case Role::STATUS_INVITED:
+                                return _t('Invited');
+                            case Role::STATUS_JOINT:
+                                return _t('Joint');
+                            case Role::STATUS_ARCHIVED:
+                                return _t('Old');
+                            default:
+                                return $currentStatus;
+                        }
+
                     }
                     return null;
                 }
@@ -57,4 +65,4 @@ else : ?>
         No Organization added<br />
     </div>
 <?php endif ?>
-<p class="text-center"><?php echo CHtml::link(O::t('organizzy', 'Create new'), ['create'], ['class' => 'btn']) ?></p>
+<p class="text-center"><?php echo CHtml::link(_t('Create new'), ['create'], ['class' => 'btn']) ?></p>

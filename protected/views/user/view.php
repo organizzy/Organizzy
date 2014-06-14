@@ -3,12 +3,12 @@
 /* @var $user User */
 
 $this->layout = '//layouts/single';
-$this->pageTitle = 'Profile';
+$this->pageTitle = _t('Profile');
 if ($user->id == O::app()->user->id) {
     $this->menu = [
-        ['label' => 'Edit Profile', 'url' => ['edit']],
-        ['label' => 'Edit Account', 'url' => ['account']],
-        ['label' => 'Change Photo', 'url' => '#', 'options' => ['onclick' => '$("#Photo_file").click()']]
+        ['label' => _t('Edit Profile'), 'url' => ['edit']],
+        ['label' => _t('Edit Account'), 'url' => ['account']],
+        ['label' => _t('Change Photo'), 'url' => '#', 'options' => ['onclick' => '$("#Photo_file").click()']]
     ] ;
 }
 //if (!isset($_GET['return']))
@@ -21,13 +21,13 @@ if ($user->id == O::app()->user->id) {
     ]) ?>
 <div class="tab-view">
     <div class="selector">
-        <a href="#user-view-info" class="active" id="user-view-info-selector">Info</a>
-        <a href="#user-view-history" id="user-view-history-selector">History</a>
+        <a href="#user-view-info" class="active" id="user-view-info-selector"><?php _p('Info') ?></a>
+        <a href="#user-view-history" id="user-view-history-selector"><?php _p('History') ?></a>
     </div>
     <div class="content-padded tab-page active" id="user-view-info">
         <?php if ($user->id == $this->userId && !$user->getActivated()) : ?>
-            <strong>Your account has not been activated.</strong>
-            <?php echo CHtml::link(O::t('organizzy', 'Activate now'), ['activate'], ['class' => 'btn btn-block btn-primary']) ?>
+            <strong><?php _p('Your account has not been activated'); ?></strong>
+            <?php echo CHtml::link(_t('Activate now'), ['activate'], ['class' => 'btn btn-block btn-primary']) ?>
         <?php endif ?>
 
         <?php
@@ -37,17 +37,16 @@ if ($user->id == O::app()->user->id) {
             echo '</p>';
         }
 
-        if ($user->getProfile('birth_date')) {
-            showDetail(O::t('organizzy', 'Born on %s'),
-                O::app()->dateFormatter->formatDateTime($user->getProfile('birth_date'), 'full', false), 'gift');
+        if ($value = $user->getProfile('birth_date')) {
+            showDetail(_t('Born on %s'), O::app()->dateFormatter->formatDateTime($value, 'full', false), 'gift');
         }
 
-        if ($user->getProfile('city')) {
-            showDetail(O::t('organizzy', 'Live in %s'), $user->getProfile('city'), 'map-marker');
+        if ($value = $user->getProfile('city')) {
+            showDetail(_t('Live in %s'), $value, 'map-marker');
         }
 
-        if ($user->getProfile('phone')) {
-            showDetail(O::t('organizzy', 'Phone number: %s'), $user->getProfile('phone'), 'phone');
+        if ($value = $user->getProfile('phone')) {
+            showDetail(_t('Phone number: %s'), $value, 'phone');
         }
 
         ?>
@@ -62,10 +61,11 @@ if ($user->id == O::app()->user->id) {
                         $position = $model->role->position;
                         if ($model->role->department_id)
                             $position .= ' ' . $model->role->department->name;
-                        return sprintf(
-                            'As %s since %s',
-                            '<b>' . CHtml::encode($position ) . '</b>',
-                            O::app()->dateFormatter->formatDateTime($model->role->join_time, 'medium', false)
+                        return _t( 'As {position} since {joint-time}',
+                            [
+                                '{position}' => '<b>' . CHtml::encode($position ) . '</b>',
+                                '{joint-time}' => O::app()->dateFormatter->formatDateTime($model->role->join_time, 'medium', false)
+                            ]
                         );
                     },
                 'photoAttr' => function($model) {

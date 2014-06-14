@@ -102,7 +102,7 @@ class OrganizationController extends Controller
 
         if (isset($_POST['confirm'])) {
             $model->delete();
-            O::app()->user->setFlash('success', 'Organization has been deleted');
+            O::app()->user->setFlash('success', _t('Organization has been deleted'));
             $this->redirect(array('index'));
         }
 
@@ -145,7 +145,7 @@ class OrganizationController extends Controller
         if(! $lastAdmin && isset($_POST['leave']))
         {
             Role::model()->deleteByPk(['user_id' => $this->userId, 'organization_id' => $id]);
-            O::app()->user->setFlash('success', 'Leaving successful');
+            O::app()->user->setFlash('success', _t('Leaving successful'));
             $this->redirect(array('/organization'));
         }
 
@@ -186,7 +186,7 @@ class OrganizationController extends Controller
 	{
 		$model=Organization::model()->findByPk($id);
 		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
+			throw new CHttpException(404,_t('The requested page does not exist.'));
 		return $model;
 	}
 

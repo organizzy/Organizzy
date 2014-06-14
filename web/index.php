@@ -29,9 +29,15 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
         return;
     }
 }
+$config = @include(__DIR__ . '/../config.php');
 
-require_once(__DIR__ . '/../vendor/yiisoft/yii/framework/yii.php');
+defined('O_DEBUG') or define('O_DEBUG', false);
+if (O_DEBUG) {
+    require_once(__DIR__ . '/../vendor/yiisoft/yii/framework/yii.php');
+}
+else {
+    require_once(__DIR__ . '/../vendor/yiisoft/yii/framework/yiilite.php');
+}
 require_once(__DIR__ . '/../protected/organizzy.php');
 
-$config = @include(__DIR__ . '/../config.php');
 O::createOrganizzyApplication($config)->run();

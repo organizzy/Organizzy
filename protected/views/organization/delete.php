@@ -9,7 +9,7 @@ $this->backUrl = $this->createUrl('view', array('id' => $model->id));
 ?>
 
 <div class="content-padded">
-    <p><?php printf(O::t('organizzy', 'Are you sure you want to delete organization %s?'), '<b>' . $model->name . '</b>') ?></p>
+    <p><?php _p('Are you sure you want to delete organization {organization}?', ['{organization}' => '<b>' . $model->name . '</b>']) ?></p>
     <form method="post">
         <?php echo CHtml::hiddenField('confirm', 1) ?>
         <?php echo CHtml::submitButton('Delete', array('class' => 'btn btn-block btn-primary')) ?>

@@ -87,8 +87,6 @@
                 backUrl = decodeURIComponent(back[1]);
             }
             else {
-
-
                 backUrl = arg.backUrl;
             }
 
@@ -98,6 +96,8 @@
             if (saveCache && !arg.disableCache) {
                 localStorage.setItem(cacheName(url), content);
             }
+
+            sessionStorage.setItem('currentUrl', arg.url);
 
             //history.pushState(arg, document.title, arg.url + hashUrl);
 
@@ -119,7 +119,7 @@
         if ($body.trigger('pagebeforechange') === false)
             return;
 
-        $('#loader').attr('class', '').show();
+        var $loader = $('#loader').attr('class', '').show();
 
         var loadFromServer = true;
         if (! options.disableCache && !options.data) {
@@ -131,19 +131,22 @@
                 loadFromServer = options.cacheOnly != true;
 
                 if (loadFromServer) {
-                    $('#loader').attr('class', 'mini').show();
+                    $loader.attr('class', 'mini').show();
                 }
             }
         }
 
         if (loadFromServer) {
-
             loadPage(url, options.data, options);
         }
     }
 
     //O.navigation.loadPage = loadPage;
     O.navigation.changePage = changePage;
+
+    O.navigation.getCurrentPage = function() {
+        return sessionStorage.getItem('currentUrl') || null;
+    };
 
     function cacheName(url) {
         return 'cache:' + url.match(/[^#]+/)[0];

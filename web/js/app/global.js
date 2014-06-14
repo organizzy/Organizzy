@@ -27,11 +27,12 @@ var O = window.O || {};
 
     O.init = function(baseServer) {
         O.navigation.serverBase = baseServer;
-
-        if (localStorage.getItem('sessionId')) {
-            O.navigation.changePage('/activity/index');
-        } else {
-            O.navigation.changePage('/user/login');
+        var currentPage = O.navigation.getCurrentPage();
+        if (currentPage) {
+            O.navigation.changePage(currentPage);
+        }
+        else {
+            O.navigation.changePage('/site/boot?v=' + O.clientVersion);
         }
     };
 

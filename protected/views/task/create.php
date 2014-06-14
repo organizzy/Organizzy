@@ -3,7 +3,7 @@
 /* @var Task $model */
 
 $this->layoutSingle($this->getBackUrlByModel($model));
-$this->pageTitle = 'Create Task';
+$this->pageTitle = _t('Create Task');
 
 ?>
 <div class="content-padded">

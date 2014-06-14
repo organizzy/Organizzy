@@ -3,7 +3,7 @@
 /* @var $model Organization */
 
 $this->layoutSingle(['index']);
-$this->pageTitle = O::t('organizzy', 'Create Organization');
+$this->pageTitle = _t('Create Organization');
 ?>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

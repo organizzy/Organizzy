@@ -24,7 +24,7 @@ class UserController extends Controller {
     public function actionLogin()
     {
         if (!O::app()->user->isGuest ){
-            $this->redirect(O::app()->user->returnUrl);
+            $this->redirect(['/activity/index']);
         }
 
         $model=new LoginForm;
@@ -67,7 +67,7 @@ class UserController extends Controller {
             $model->attributes=$_POST['User'];
 
             if($model->validate() && $model->save()) {
-                O::app()->user->setFlash('info', O::t('organizzy', 'Register success, please login'));
+                O::app()->user->setFlash('info', _t('Register success, please login'));
                 O::app()->session->add('email', $model->email);
                 O::app()->sendMailToUser('user/register', ['model' => $model], $model->id);
 
@@ -127,7 +127,7 @@ class UserController extends Controller {
         $model->oldEmail = $model->email;
 
         if (FormHandler::save($model)) {
-            O::app()->user->setFlash('success', 'Account updated');
+            O::app()->user->setFlash('success', _t('Account updated'));
             if ($model->oldEmail != $model->email) {
                 O::app()->sendMailToUser('user/activation', ['model' => $model]);
             }
@@ -160,19 +160,19 @@ class UserController extends Controller {
             if ($model->activation_code == $_POST['activation_code']) {
                 $model->status = User::STATUS_ACTIVE;
                 if ($model->save()) {
-                    O::app()->user->setFlash('success', 'Your account have been activated');
+                    O::app()->user->setFlash('success', _t('Your account have been activated'));
                     $this->redirect(['view']);
                 }
                 else {
-                    throw new CHttpException(500, 'Internal Server Error');
+                    throw new CHttpException(500, _t('Internal Server Error'));
                 }
             } else {
-                O::app()->user->setFlash('error', 'Invalid activation code');
+                O::app()->user->setFlash('error', _t('Invalid activation code'));
             }
         }
         elseif ($resend) {
             O::app()->sendMailToUser('user/activation', ['model' => $model]);
-            O::app()->user->setFlash('success', 'The activation code has been sent to ' . $model->email);
+            O::app()->user->setFlash('success', _t('The activation code has been sent to {email}', ['{email}' => $model->email]));
         }
 
         $this->render('activate', ['model' => $model]);
@@ -186,7 +186,7 @@ class UserController extends Controller {
     private function loadModel($id) {
         $model = User::model()->findByPk($id);
         if (!$model) {
-            throw new CHttpException(404, 'Profile not found');
+            throw new CHttpException(404, _t('User not found'));
         }
         return $model;
     }

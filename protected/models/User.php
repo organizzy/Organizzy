@@ -179,7 +179,7 @@ class User extends ActiveRecord
 
     public function checkOldPassword() {
         if ($this->password != crypt($this->old_password, $this->password)) {
-            $this->addError('old_password', O::t('organizzy', 'Wrong password'));
+            $this->addError('old_password', _t('Wrong password'));
         }
     }
 
@@ -213,16 +213,13 @@ class User extends ActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'email' => 'Email',
-			'password' => 'Password',
-			'name' => 'Name',
-			'photo' => 'Photo',
-			'register_time' => 'Register Time',
-			'status' => 'Status',
+			'email' => _t('Email'),
+			'password' => _t('Password'),
+			'name' => _t('Name'),
 
-            'password1' => 'Password',
-            'password2' => 'Confirm Password',
+            'old_password' => _t('Old Password'),
+            'password1' => _t('Password'),
+            'password2' => _t('Confirm Password'),
 		);
 	}
 

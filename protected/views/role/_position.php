@@ -11,5 +11,5 @@
         echo '<option value="', $v, '">', $v, '</option>';
     }
     ?>
-    <option value="0"><?php echo O::t('organizzy', 'Other ...') ?></option>
+    <option value="0"><?php _p('Other ...') ?></option>
 </select>

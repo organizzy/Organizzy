@@ -9,14 +9,14 @@
  */
 
 $this->layoutSingle($this->getBackUrlByModel($model));
-$this->pageTitle = 'Task';
+$this->pageTitle = _t('Task');
 
 $canEdit = $this->rule->checkUpdateAccess($model, false);
 if ($canEdit) {
     $this->menu = [
-        ['label' => 'Edit', 'url' => ['update', 'id' => $model->id]],
-        ['label' => 'Delete', 'url' => ['delete', 'id' => $model->id],
-         'options' => ['class' => 'btn-post', 'data-post' => 'confirm=1', 'data-ask' => 'Are you sure?']],
+        ['label' => _t('Edit'), 'url' => ['update', 'id' => $model->id]],
+        ['label' => _t('Delete'), 'url' => ['delete', 'id' => $model->id],
+         'options' => ['class' => 'btn-post', 'data-post' => 'confirm=1', 'data-ask' => _t('Delete this task?')]],
     ];
 }
 
@@ -64,7 +64,7 @@ if ($canEdit) {
             $lastProgress = O::app()->db->createCommand()->select('MAX(progress)')->from('task_progress')
                 ->where('task_id = :tid')->queryScalar([':tid' => $model->id]) ?: 0;
             ?>
-            <h4>Add Progress</h4>
+            <h4><?php _p('Add Progress<') ?>/h4>
             <div class="row input">
                 <?php echo $form->labelEx($progress, 'progress') ?>
                 <?php echo $form->numberField($progress, 'progress', ['value' => $lastProgress + 1, 'min' => $lastProgress + 1, 'max' => 100]) ?>
