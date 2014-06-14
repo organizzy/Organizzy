@@ -32,7 +32,8 @@ $this->layout = '//layouts/main';
         <?php $this->endWidget(); ?>
 
         <div class="register-button">
-            <?php echo CHtml::link(_t('New User? Register!'), array('register')) ?>
+            <?php echo CHtml::link(Yii::t('organizzy', 'Forgot Password'), array('forgotPassword')) ?> |
+            <?php echo CHtml::link(Yii::t('organizzy', 'Register'), array('register')) ?>
         </div>
 
     </div>

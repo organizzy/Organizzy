@@ -78,6 +78,33 @@ class UserController extends Controller {
         $this->render('register',array('model'=>$model));
     }
 
+    public function actionForgotPassword() {
+        $email = null;
+        if (isset($_POST['email'])) {
+            $email = $_POST['email'];
+            $user = User::model()->findByEmail($email);
+            if ($user) {
+                O::import('lib.utils.Random', true);
+                $newPassword = lib\utils\Random::generate(8, lib\utils\Random::CASE_BOTH, true);
+                $user->password = crypt($newPassword);
+                $user->save();
+                O::app()->mail->sendTemplate('user/reset-password', $user->email, $user->name,
+                    ['model' => $user, 'password' => $newPassword]);
+                O::app()->user->setFlash('success',
+                    O::t('organizzy', 'Your new password was sent to {email}.', ['{email}' => $user->email])
+                );
+                $this->redirect(['login']);
+            }
+            else {
+                O::app()->user->setFlash('error',
+                    O::t('organizzy', 'Email address "{email}" is not found', ['{email}' => $email])
+                );
+            }
+        }
+
+        $this->render('reset-password');
+    }
+
     public function actionView($id = null) {
         if (!$id) $id = $this->userId;
         $user = $this->loadModel($id);
