@@ -3,8 +3,94 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c429ca1c1c522e8f8506c0f07955b21a",
+    "hash": "00a3804bf042eb09a4fdc11644030953",
     "packages": [
+        {
+            "name": "hafsoft/php-minifier",
+            "version": "v0.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hafsoft/php-minifier.git",
+                "reference": "2d0477bace82e57902213eca08d45619e8ad3849"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hafsoft/php-minifier/zipball/2d0477bace82e57902213eca08d45619e8ad3849",
+                "reference": "2d0477bace82e57902213eca08d45619e8ad3849",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Abi Hafshin"
+                }
+            ],
+            "description": "Pure PHP JS and CSS Minifier. Thanks to phpmin & cssmin",
+            "homepage": "https://github.com/hafsoft/php-minifier",
+            "keywords": [
+                "compression",
+                "minification"
+            ],
+            "time": "2014-01-10 11:04:17"
+        },
+        {
+            "name": "leafo/scssphp",
+            "version": "0.0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/leafo/scssphp.git",
+                "reference": "558357feceb9b932a192966945904414dc372e4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/leafo/scssphp/zipball/558357feceb9b932a192966945904414dc372e4d",
+                "reference": "558357feceb9b932a192966945904414dc372e4d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "php": ">=5.3.0",
+                "phpunit/phpunit": "3.7.*"
+            },
+            "bin": [
+                "pscss"
+            ],
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "scss.inc.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT",
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Leaf Corcoran",
+                    "email": "leafot@gmail.com",
+                    "homepage": "http://leafo.net"
+                }
+            ],
+            "description": "scssphp is a compiler for SCSS written in PHP.",
+            "homepage": "http://leafo.net/scssphp/",
+            "time": "2014-04-15 02:25:09"
+        },
         {
             "name": "phpmailer/phpmailer",
             "version": "v5.2.8",

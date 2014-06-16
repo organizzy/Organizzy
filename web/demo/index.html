@@ -6,14 +6,16 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <link href="css/lib.css" rel="stylesheet">
+    <link href="css/ratchet.min.css" rel="stylesheet">
+    <link href="css/ratchet-theme-android.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
     <style>
         * {margin: 0}
         html, body {height: 100%}
         #page-loading {
             background-color: #FF851B;
             color: #ffffff;
-            font-family: sans;
+            font-family: "Roboto", sans-serif;
 
         }
         #page-loading #loading {
@@ -32,9 +34,6 @@
             width: 10%;
         }
     </style>
-
-    <script src="js/jquery-1.11.1.min.js"></script>
-
 </head>
 <body id="page-loading">
 <table id="loading">
@@ -43,24 +42,22 @@
         <img src="images/ajax_loader.gif" class="gif" /><br />
     </td></tr>
 </table>
+<script src="js/jquery-1.11.1.min.js"></script>
 <script>
     jQuery(function($){
-        var serverBase = '';
-        window.O = {
-            clientVersion: 000524 // 0.5.24
-        };
+        var serverBase = location.pathname;
+        serverBase = serverBase.substr(0, serverBase.lastIndexOf('/', serverBase.lastIndexOf('/') - 1));
 
         var css = document.createElement('link');
         css.rel = 'stylesheet';
-        css.href = serverBase + '/css/style.css';
+        css.href = serverBase + '/assets/style.css';
 
         var script = document.createElement('script');
-        //script.differ = true;
+        script.differ = true;
         script.onload = function(){
             O.init(serverBase);
-            console.log(this);
         };
-        script.src = serverBase + '/js/app.js';
+        script.src = serverBase + '/assets/app.js';
 
         var head = $('head')[0];
         head.appendChild(css);

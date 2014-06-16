@@ -44,7 +44,7 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
-	    $this->redirect(O::app()->baseUrl . '/index.html', true, 301);
+	    $this->redirect(O::app()->baseUrl . '/demo/index.html', true, 301);
 	}
 
     /**
