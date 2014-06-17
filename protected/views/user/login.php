@@ -8,7 +8,7 @@ $this->layout = '//layouts/main';
 ?>
 <div class="content" id="content-<?php echo $this->getPageId() ?>">
     <div class="content-padded">
-        <img src="<?php echo Yii::app()->getBaseUrl(true) ?>/images/logo.png" id="logo" />
+        <img src="images/logo.png" id="logo" />
 
         <?php $form=$this->beginWidget('CActiveForm'); ?>
         <div class="row">
