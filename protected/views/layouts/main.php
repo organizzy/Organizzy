@@ -15,11 +15,46 @@ if (O::app()->session->isStarted) {
 if ($this->disableCache) {
     $data['disableCache'] = true;
 }
+echo '<!--page:', json_encode($data), '-->',  $content;
 
-echo '<!--page:', json_encode($data), '-->',
-    //preg_replace(['/\s{2,}/s'], [' '], $content),
-    $content,
-    '<div id="loader" style="display: none"></div>';
-$this->renderPartial('//layouts/_flash');
-return;
+?>
+<div id="loader" style="display: none; /*noinspection CssUnknownTarget*/background-image: url(images/ajax_loader.gif)"></div>
 
+<?php
+$flashes = O::app()->user->getFlashes();
+if (count($flashes)) :
+    ?>
+    <div id="flash-container">
+        <?php
+        foreach($flashes as $key => $message) {
+            switch($key) {
+                case 'info':
+                    $icon = 'info-circle';
+                    break;
+
+                case 'success':
+                    $icon = 'check-circle';
+                    break;
+
+                case 'warning':
+                    $icon = 'exclamation-triangle';
+                    break;
+
+                case 'error':
+                    $icon = 'exclamation-circle';
+                    break;
+
+                default:
+                    $icon = null;
+            }
+
+            echo '<div class="flash flash-' . $key . '">';
+            if ($icon) {
+                echo '<span class="fa fa-', $icon, '"></span> ';
+            }
+            echo $message . "</div>\n";
+        }
+        ?>
+    </div>
+
+<?php endif ?>
