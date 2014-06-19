@@ -35,7 +35,7 @@ for ($i = 1; $i<$argc; $i++) {
     if ($watch)
         $am->watch($argv[$i]);
     else
-        $am->procress($argv[$i]);
+        $am->process($argv[$i]);
 }
 if ($all) {
     if ($watch)
@@ -74,7 +74,7 @@ class AssetManager {
      */
     public function processAll($force = false) {
         foreach ($this->assets as $id => $data) {
-            $this->procress($id, $force);
+            $this->process($id, $force);
         }
     }
 
@@ -82,7 +82,7 @@ class AssetManager {
      * @param int $id
      * @param bool $force
      */
-    public function procress($id, $force = false) {
+    public function process($id, $force = false) {
         $data = $this->assets[$id];
         $output = $this->outputBase . '/' . $data['out'];
         $inputs = [];
@@ -93,6 +93,7 @@ class AssetManager {
 
         $processor = $this->getProcessor($data['type']);
         echo "processing '$output' ...\n";
+        unlink($output);
         $processor->process($output, $inputs, $options);
     }
 
@@ -103,7 +104,7 @@ class AssetManager {
         while(true) {
             clearstatcache();
             if ($this->inputChanged($id) > 0) {
-                $this->procress($id);
+                $this->process($id);
             }
             sleep($this->watchSleep);
         }
@@ -117,7 +118,7 @@ class AssetManager {
             clearstatcache();
             foreach ($this->assets as $id => $data) {
                 if ($this->inputChanged($id) > 0) {
-                    $this->procress($id);
+                    $this->process($id);
                 }
             }
             sleep($this->watchSleep);
@@ -156,7 +157,7 @@ class AssetManager {
      * @return AssetProcessor
      * @throws Exception
      */
-    private function getProcessor($type) {
+    public function getProcessor($type) {
         if (! isset($this->processorCache[$type])) {
             if (! isset($this->processors[$type])) {
                 throw new Exception('Unknown asset type: ' . $type);
@@ -165,7 +166,7 @@ class AssetManager {
             foreach ($this->processors[$type] as $class) {
                 $method = [$class, 'supported'];
                 if (is_callable($method) && call_user_func($method, $type)) {
-                    return $this->processorCache[$type] = new $class($type);
+                    return $this->processorCache[$type] = new $class($this, $type);
                 }
             }
 
@@ -180,6 +181,15 @@ class AssetManager {
 }
 
 abstract class AssetProcessor {
+
+    /** @var  AssetManager */
+    protected $manager;
+
+    function __construct($manager)
+    {
+        $this->manager = $manager;
+    }
+
 
     /**
      * @return bool
@@ -247,7 +257,7 @@ class JsMinAssetProcessor extends AssetProcessor {
      */
     protected function processFile($input, $options = [])
     {
-       return JSMinPlus::minify(file_get_contents($input));
+       return JSMinPlus::minify(file_get_contents($input)) . ';';
     }
 }
 
@@ -297,5 +307,27 @@ class ClosureAssetProcessor extends AssetProcessor {
     protected function processFile($input, $options = [])
     {
         
+    }
+}
+
+class RequireJsAssetProcessor extends AssetProcessor {
+
+    public function __construct($manager) {
+        parent::__construct($manager);
+        require_once(__DIR__ . '/../lib/RequireJS/Optimizer.php');
+    }
+
+    /**
+     * @param $input
+     * @param array $options
+     * @return string
+     */
+    protected function processFile($input, $options = [])
+    {
+        $optimizer = new lib\RequireJS\Optimizer(dirname($input));
+        $optimizer->addModule(basename($input, '.js'));
+        $content = $optimizer->export();
+        return JSMinPlus::minify($content);
+
     }
 }

@@ -42,27 +42,28 @@
         <img src="images/ajax_loader.gif" class="gif" /><br />
     </td></tr>
 </table>
-<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/require.js"></script>
 <script>
+
     window.O = {};
-    jQuery(function($){
+    require.config({
+        baseUrl: 'js',
+
+        paths: {
+            app: 'http://organizzy.test/assets/app'
+        }
+    });
+    require(['jquery', 'app'], function($, app){
         var serverBase = location.pathname;
         serverBase = serverBase.substr(0, serverBase.lastIndexOf('/', serverBase.lastIndexOf('/') - 1));
 
         var css = document.createElement('link');
         css.rel = 'stylesheet';
         css.href = serverBase + '/assets/style.css';
+        $('head').append(css);
 
-        var script = document.createElement('script');
-        script.differ = true;
-        script.onload = function(){
-            O.init(serverBase);
-        };
-        script.src = serverBase + '/assets/app.js';
-
-        var head = $('head')[0];
-        head.appendChild(css);
-        head.appendChild(script);
+        app.main.init('../');
+        window.O = app;
     });
 
 </script>

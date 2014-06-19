@@ -16,23 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-(function($, undefined){
-    var O = window.O;
-    O.navigation = O.navigation || {};
+define(['jquery'], function($, undefined){
+    var navigation = {};
 
     var $body = $(document.body);
 
     var loadPageXhr = undefined;
     var backUrl = undefined;
 
-    O.navigation.serverBase = '';
+    var baseUrl = '';
     $.support.cors = true;
 
     function loadPage(url, data, options) {
         options = options || {};
 
         loadPageXhr = $.ajax({
-            url: O.navigation.serverBase + url,
+            url: baseUrl + url,
             context: document.body,
             data: data,
             type: data ? 'POST' : 'GET',
@@ -71,7 +70,7 @@
         });
     }
 
-    function replacePageContent(url, content, saveCache, options) {
+    function replacePageContent(url, content, saveCache) {
         //options = options || {};
 
         var iPos = content.indexOf('<!--page:');
@@ -108,7 +107,11 @@
         $body.trigger('pagechange');
     }
 
-    function changePage(url, options) {
+    navigation.setBaseUrl = function(_baseUrl) {
+        baseUrl = _baseUrl;
+    };
+
+    var changePage = navigation.changePage = function(url, options) {
         options = options || {};
 
         if (loadPageXhr) {
@@ -119,7 +122,8 @@
         if ($body.trigger('pagebeforechange') === false)
             return;
 
-        var $loader = $('#loader').attr('class', '').show();
+        //noinspection JSJQueryEfficiency
+        $('#loader').attr('class', '').show();
 
         var loadFromServer = true;
         if (! options.disableCache && !options.data) {
@@ -131,7 +135,7 @@
                 loadFromServer = options.cacheOnly != true;
 
                 if (loadFromServer) {
-                    $loader.attr('class', 'mini').show();
+                    $('#loader').attr('class', 'mini').show();
                 }
             }
         }
@@ -139,12 +143,9 @@
         if (loadFromServer) {
             loadPage(url, options.data, options);
         }
-    }
+    };
 
-    //O.navigation.loadPage = loadPage;
-    O.navigation.changePage = changePage;
-
-    O.navigation.getCurrentPage = function() {
+    navigation.getCurrentPage = function() {
         return sessionStorage.getItem('currentUrl') || null;
     };
 
@@ -153,22 +154,24 @@
     }
 
 
-    O.navigation.clearCache = function(url) {
+    navigation.clearCache = function(url) {
         if (url) {
             localStorage.removeItem(cacheName(url));
         } else {
-            var len = localStorage.length;
-            for(var i=0; i<len; i++) {
+            var i = 0;
+            while(i < localStorage.length) {
                 var key = localStorage.key(i);
                 if (key.substr(0, 6) == 'cache:') {
                     localStorage.removeItem(key);
+                } else {
+                    i++;
                 }
             }
         }
 
     };
 
-    O.navigation.back = function() {
+    navigation.back = function() {
         if (backUrl) {
             changePage(backUrl);
             return true;
@@ -179,11 +182,11 @@
         return false;
     };
 
-    O.navigation.isLoading = function() {
+    navigation.isLoading = function() {
         return loadPageXhr != undefined;
     };
 
-    O.navigation.cancel = function() {
+    navigation.cancel = function() {
         if (loadPageXhr) {
             loadPageXhr.cancel = true;
             loadPageXhr.abort();
@@ -220,7 +223,7 @@
 
             else if ($this.hasClass('btn-back')) {
                 if (!backUrl) backUrl = url;
-                O.navigation.back();
+                navigation.back();
             }
 
             else {
@@ -252,15 +255,12 @@
         e.preventDefault();
     }
 
-
-
     $(document).ready(function(){
         $(document.body).trigger('pagechange');
     });
 
-//$('#loader').hide();
-    //history.replaceState({url: location.href}, document.title, location.href);
-    //$(document.body).trigger('pagechange');
-})(jQuery);
+    return navigation;
+
+});
 
 

@@ -83,4 +83,19 @@ class ActivityController extends Controller {
             ));
     }
 
+
+    public function actionGet($date) {
+        $result = [];
+        /** @var Activity $model */
+        foreach (Activity::model()->onlyMine($this->userId)->onlyForDate($date)->withDetails()->findAll() as $model) {
+            $item = ['id' => $model->id, 'type' => $model->type, 'title' => $model->getTitle(), 'time' => $model->datetime];
+            if ($model->itemType == Activity::TYPE_EVENT) {
+
+            }
+            $result[] = $item;
+        }
+        echo json_encode($result);
+    }
+
+
 } 

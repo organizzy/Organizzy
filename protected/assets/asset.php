@@ -14,8 +14,12 @@ return [
     'assets' => [
         [
             'out' => 'app.js',
-            'in' => ['scripts/global.js', 'scripts/ajax-page.js'],
-            'type' => 'js',
+            'in' => ['scripts/app.js'],
+            'watch' => [
+                'scripts/app/navigation.js',
+                'scripts/app/main.js',
+            ],
+            'type' => 'r.js',
         ],
 
         [
@@ -34,7 +38,8 @@ return [
     ],
 
     'processors' => [
-        'js' => [ClosureAssetProcessor::getClass(), JsMinAssetProcessor::getClass()],
+        'r.js' => [RequireJsAssetProcessor::getClass()],
+        'js' => [ClosureAssetProcessor::getClass(), JsMinAssetProcessor::getClass()], // ClosureAssetProcessor::getClass(),
         'scss' => [ScssPhpAssetProcessor::getClass()],
     ],
 ];

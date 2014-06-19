@@ -28,7 +28,7 @@ class AjaxHandler {
      */
     public static function handleFormError($model) {
         if ($model->hasErrors()) {
-            self::returnScript('O.handleFormError("' . get_class($model) . '", ' . json_encode($model->getErrors()) . ');');
+            self::returnScript('O.main.handleFormError("' . get_class($model) . '", ' . json_encode($model->getErrors()) . ');');
         }
     }
 

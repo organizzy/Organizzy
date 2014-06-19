@@ -15,24 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+"use strict";
+define(['jquery', './navigation'], function($, navigation){
+    var main = {};
 
-var O = window.O || {};
+    main.init = function(baseUrl) {
+        navigation.setBaseUrl(baseUrl);
 
-(function($, undefined){
-    var O = window.O;
-
-    $(document).ready(function(){
-        $('#loader').hide();
-    });
-
-    O.init = function(baseServer) {
-        O.navigation.serverBase = baseServer;
-        var currentPage = O.navigation.getCurrentPage();
+        var currentPage = navigation.getCurrentPage();
         if (currentPage) {
-            O.navigation.changePage(currentPage);
+            navigation.changePage(currentPage);
         }
         else {
-            O.navigation.changePage('/site/boot?v=' + O.clientVersion);
+            navigation.changePage('/site/boot?v=' + 100);
         }
     };
 
@@ -58,7 +53,7 @@ var O = window.O || {};
 
     document.addEventListener("menubutton", function(){
         //var $moreMenu = $('#more-menu');
-        if (! O.navigation.isLoading()) {
+        if (! navigation.isLoading()) {
             toggleMenu();
         }
         return false;
@@ -79,7 +74,7 @@ var O = window.O || {};
         if (moreMenuShown) {
             toggleMenu(false);
         }
-        else if (!O.navigation.back()) {
+        else if (!navigation.back()) {
             //navigator.app.exitApp();
         }
         e.preventDefault();
@@ -89,7 +84,7 @@ var O = window.O || {};
     //---------------------
     // FORM
     //---------------------
-    O.handleFormError = function(model, errors) {
+    main.handleFormError = function(model, errors) {
         $('.errorMessage').hide();
         for(var attr in errors) {
             var name = model + '[' + attr + ']';
@@ -170,5 +165,5 @@ var O = window.O || {};
         $('#photo-upload-form').submit();
     });
 
-
-})(jQuery);
+    return main;
+});
