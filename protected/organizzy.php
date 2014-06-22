@@ -115,6 +115,8 @@ class OrganizzyApplication extends CWebApplication {
 
         'id' => 'id_ID',
         'id_ID' => 'id_ID',
+        'in' => 'id_ID',
+        'in_ID' => 'id_ID',
         'id_ID.UTF-8' => 'id_ID',
     ];
 
@@ -124,25 +126,36 @@ class OrganizzyApplication extends CWebApplication {
     protected function init() {
         parent::init();
         $this->initLanguage();
+
+        if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/\(tz=([^)]+)\)/', $_SERVER['HTTP_USER_AGENT'], $m)) {
+            $this->setTimeZone($m[1]);
+        }
     }
 
     private function initLanguage() {
         $lang = null;
+        if (!$lang
+            && isset($_SERVER['HTTP_USER_AGENT'])
+            && preg_match('/\(lang=([a-zA-Z_]+)\)/', $_SERVER['HTTP_USER_AGENT'], $m)
+            && isset(self::$supportedLocale[$m[1]]))
+        {
+                $lang = $m[1];
+        }
         if (!$lang && isset($_COOKIE['l']) && isset(self::$supportedLocale[$_COOKIE['l']])) {
-            $lang = self::$supportedLocale[$_COOKIE['l']];
+            $lang = $_COOKIE['l'];
         }
         if (!$lang && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
             foreach(explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $acceptLang) {
                 $tmp = explode(';', $acceptLang);
                 if (isset(self::$supportedLocale[$tmp[0]])) {
-                    $lang = self::$supportedLocale[$tmp[0]];
+                    $lang = $tmp[0];
                     break;
                 }
             }
         }
 
         if ($lang) {
-            $this->setLanguage($lang);
+            $this->setLanguage(self::$supportedLocale[$lang]);
         }
     }
 
