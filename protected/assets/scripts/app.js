@@ -1,7 +1,8 @@
-define(['app/main', 'app/navigation'], function (main, navigation)
+define(['app/main', 'app/navigation', 'app/user'], function (main, navigation, user)
 {
     return {
         main: main,
-        navigation: navigation
+        navigation: navigation,
+        user: user
     };
 });
