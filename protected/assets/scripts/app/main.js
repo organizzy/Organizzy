@@ -22,7 +22,7 @@ define(['jquery', './navigation'], function($, navigation){
     main.init = function(baseUrl) {
         navigation.setBaseUrl(baseUrl);
 
-        var currentPage = navigation.getCurrentPage();
+        var currentPage = _organizzy.getStartUpPage() || navigation.getCurrentPage();
         if (currentPage) {
             navigation.changePage(currentPage);
         }

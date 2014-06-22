@@ -45,24 +45,28 @@
 <script src="js/require.js"></script>
 <script>
 
-    window.O = {};
+    window._organizzy = {
+        getVersion: function() {return 'demo'},
+        getStartUpPage: function () {return null;},
+        login: function(){},
+        logout: function(){}
+    };
     require.config({
         baseUrl: 'js',
 
         paths: {
-            app: 'http://organizzy.test/assets/app'
+            app: '../../assets/app'
         }
     });
     require(['jquery', 'app'], function($, app){
-        var serverBase = location.pathname;
-        serverBase = serverBase.substr(0, serverBase.lastIndexOf('/', serverBase.lastIndexOf('/') - 1));
+        var serverBase = '..';
 
         var css = document.createElement('link');
         css.rel = 'stylesheet';
         css.href = serverBase + '/assets/style.css';
         $('head').append(css);
 
-        app.main.init('../');
+        app.main.init(serverBase);
         window.O = app;
     });
 
