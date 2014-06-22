@@ -92,10 +92,6 @@ return [
 			),
 		),
 
-        'request' => [
-            'enableCookieValidation' => true,
-        ],
-
         'session' => [
             'sessionName' => 'sid',
             'cookieParams' => [
