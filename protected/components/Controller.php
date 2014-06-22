@@ -62,7 +62,7 @@ class Controller extends CController
      * redirect user to login page if it have not logged in yet
      */
     public function init() {
-        if ($this->id !== 'user' && O::app()->user->isGuest) {
+        if ($this->id !== 'user' && $this->id != 'site' && O::app()->user->isGuest) {
             $this->redirect(O::app()->user->loginUrl);
         }
     }

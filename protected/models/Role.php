@@ -96,17 +96,17 @@ class Role extends ActiveRecord
 
         if ($this->department_id == null) {
             $template = [
-                O::t('organizzy', 'Chairman'),
-                O::t('organizzy', 'Vice Chairman'),
-                O::t('organizzy', 'Secretary'),
-                O::t('organizzy', 'Treasurer'),
-                O::t('organizzy', 'Vice Secretary'),
-                O::t('organizzy', 'Vice Treasurer'),
+                _t('Chairman'),
+                _t('Vice Chairman'),
+                _t('Secretary'),
+                _t('Treasurer'),
+                _t('Vice Secretary'),
+                _t('Vice Treasurer'),
             ];
         } else {
             $template = [
-                O::t('organizzy', 'Head'),
-                O::t('organizzy', 'Staff'),
+                _t('Head'),
+                _t('Staff'),
             ];
         }
 
@@ -235,8 +235,8 @@ class Role extends ActiveRecord
             //'organization_id' => 'Organization',
             //'department_id' => 'Department',
             //'type' => 'Type',
-            'position' => O::t('organizzy', 'Role'),
-            'is_admin' => O::t('organizzy', 'Is Admin'),
+            'position' => _t('Role'),
+            'is_admin' => _t('Is Admin'),
             //'status' => 'Status',
             //'join_time' => 'Join Time',
         );

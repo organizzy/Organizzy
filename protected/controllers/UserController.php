@@ -24,7 +24,7 @@ class UserController extends Controller {
     public function actionLogin()
     {
         if (!O::app()->user->isGuest ){
-            $this->redirect(O::app()->user->returnUrl);
+            $this->redirect(['/activity/index']);
         }
 
         $model=new LoginForm;
@@ -37,7 +37,7 @@ class UserController extends Controller {
 
             // validate user input and redirect to the previous page if valid
             if($model->validate() && $model->login()) {
-                AjaxHandler::returnScript('localStorage.clear();localStorage.setItem("sessionId","' . O::app()->session->sessionID . '");O.navigation.changePage("/activity/index");');
+                AjaxHandler::returnScript('O.user.login("' . O::app()->session->sessionID . '");O.navigation.changePage("/activity/index");');
             }
                 //$this->redirect(O::app()->user->returnUrl);
         }
@@ -52,7 +52,7 @@ class UserController extends Controller {
     public function actionLogout()
     {
         O::app()->user->logout();
-        $this->redirect(O::app()->user->loginUrl);
+        AjaxHandler::returnScript('O.user.logout();O.navigation.changePage("/user/login");');
     }
 
     /**
@@ -67,7 +67,7 @@ class UserController extends Controller {
             $model->attributes=$_POST['User'];
 
             if($model->validate() && $model->save()) {
-                O::app()->user->setFlash('info', O::t('organizzy', 'Register success, please login'));
+                O::app()->user->setFlash('info', _t('Register success, please login'));
                 O::app()->session->add('email', $model->email);
                 O::app()->sendMailToUser('user/register', ['model' => $model], $model->id);
 
@@ -76,6 +76,33 @@ class UserController extends Controller {
         }
 
         $this->render('register',array('model'=>$model));
+    }
+
+    public function actionForgotPassword() {
+        $email = null;
+        if (isset($_POST['email'])) {
+            $email = $_POST['email'];
+            $user = User::model()->findByEmail($email);
+            if ($user) {
+                O::import('lib.utils.Random', true);
+                $newPassword = lib\utils\Random::generate(8, lib\utils\Random::CASE_BOTH, true);
+                $user->password = crypt($newPassword);
+                $user->save();
+                O::app()->mail->sendTemplate('user/reset-password', $user->email, $user->name,
+                    ['model' => $user, 'password' => $newPassword]);
+                O::app()->user->setFlash('success',
+                    O::t('organizzy', 'Your new password was sent to {email}.', ['{email}' => $user->email])
+                );
+                $this->redirect(['login']);
+            }
+            else {
+                O::app()->user->setFlash('error',
+                    O::t('organizzy', 'Email address "{email}" is not found', ['{email}' => $email])
+                );
+            }
+        }
+
+        $this->render('reset-password');
     }
 
     public function actionView($id = null) {
@@ -100,7 +127,7 @@ class UserController extends Controller {
         $model->oldEmail = $model->email;
 
         if (FormHandler::save($model)) {
-            O::app()->user->setFlash('success', 'Account updated');
+            O::app()->user->setFlash('success', _t('Account updated'));
             if ($model->oldEmail != $model->email) {
                 O::app()->sendMailToUser('user/activation', ['model' => $model]);
             }
@@ -133,19 +160,19 @@ class UserController extends Controller {
             if ($model->activation_code == $_POST['activation_code']) {
                 $model->status = User::STATUS_ACTIVE;
                 if ($model->save()) {
-                    O::app()->user->setFlash('success', 'Your account have been activated');
+                    O::app()->user->setFlash('success', _t('Your account have been activated'));
                     $this->redirect(['view']);
                 }
                 else {
-                    throw new CHttpException(500, 'Internal Server Error');
+                    throw new CHttpException(500, _t('Internal Server Error'));
                 }
             } else {
-                O::app()->user->setFlash('error', 'Invalid activation code');
+                O::app()->user->setFlash('error', _t('Invalid activation code'));
             }
         }
         elseif ($resend) {
             O::app()->sendMailToUser('user/activation', ['model' => $model]);
-            O::app()->user->setFlash('success', 'The activation code has been sent to ' . $model->email);
+            O::app()->user->setFlash('success', _t('The activation code has been sent to {email}', ['{email}' => $model->email]));
         }
 
         $this->render('activate', ['model' => $model]);
@@ -159,7 +186,7 @@ class UserController extends Controller {
     private function loadModel($id) {
         $model = User::model()->findByPk($id);
         if (!$model) {
-            throw new CHttpException(404, 'Profile not found');
+            throw new CHttpException(404, _t('User not found'));
         }
         return $model;
     }

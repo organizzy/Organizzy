@@ -153,9 +153,9 @@ class EventController extends Controller
         //if (isset($_POST['confirm'])) {
             $backUrl = $this->getBackUrlByModel($model);
             if ($model->delete()) {
-                O::app()->user->setFlash('success', 'Event has been deleted');
+                O::app()->user->setFlash('success', _t('Event has been deleted'));
             } else {
-                O::app()->user->setFlash('error', 'Failed to delete event');
+                O::app()->user->setFlash('error', _t('Failed to delete event'));
             }
 
             $this->redirect($backUrl);
@@ -196,9 +196,9 @@ class EventController extends Controller
 
         //if (isset($_POST['confirm'])) {
             if (EventRecurrence::model()->deleteByPk($rid)) {
-                O::app()->user->setFlash('success', 'Recurrence has been deleted');
+                O::app()->user->setFlash('success', _t('Recurrence has been deleted'));
             } else {
-                O::app()->user->setFlash('error', 'Failed to delete recurrence');
+                O::app()->user->setFlash('error', _t('Failed to delete recurrence'));
             }
         //}
         $this->redirect(['view', 'id' => $id]);
@@ -215,7 +215,7 @@ class EventController extends Controller
     public function actionConfirm($id, $rid) {
         $event = $this->loadModel($id);
         if ($event->type == Event::TYPE_PERSONAL)
-            throw new CHttpException(400, 'Invalid event type');
+            throw new CHttpException(400, _t('Invalid event type'));
         // todo: check if user is invited
 
 
@@ -275,7 +275,7 @@ class EventController extends Controller
 	{
 		$model=Event::model()->findByPk($id);
 		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
+			throw new CHttpException(404, _t('The requested page does not exist.'));
 		return $model;
 	}
 

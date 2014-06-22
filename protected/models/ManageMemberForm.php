@@ -53,9 +53,9 @@ class ManageMemberForm extends CFormModel implements ISavableModel {
      */
     public function getPossibleActions() {
         return [
-            self::ACTION_KICK => O::t('organizzy', 'Kick'),
-            self::ACTION_PROMOTE => O::t('organizzy', 'Promote to Admin'),
-            self::ACTION_DEMOTE => O::t('organizzy', 'Demote from Admin'),
+            self::ACTION_KICK => _t('Kick'),
+            self::ACTION_PROMOTE => _t('Promote to Admin'),
+            self::ACTION_DEMOTE => _t('Demote from Admin'),
         ];
     }
 

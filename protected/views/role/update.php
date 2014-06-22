@@ -30,7 +30,7 @@ $this->layoutSingle($backUrl);
     if ($model->user_id != $this->userId) {
         echo CHtml::link('<i class="fa fa-times"></i> Kick', ['kick', 'return' =>  CHtml::normalizeUrl($backUrl)], [
                 'class' => 'btn btn-post', 'data-post' => ('oid=' . $model->organization_id . '&uid=' . $model->user_id),
-                'data-ask' => O::t('organizzy', 'Kick this user from ') . $model->organization->name . '?',
+                'data-ask' => _t('Kick this user from ') . $model->organization->name . '?',
             ]);
     }
     ?>

@@ -100,10 +100,8 @@ class DepartmentController extends Controller
         $org_id = $model->organization_id;
         $this->rule->checkDeleteAccess($model);
         $model->delete();
-
-        // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-        if(!isset($_GET['ajax']))
-            $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('/organization/view', 'id' => $org_id));
+        O::app()->user->setFlash('success', _t('Department deleted'));
+        $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('/organization/view', 'id' => $org_id));
     }
 
     /**
@@ -117,7 +115,7 @@ class DepartmentController extends Controller
     {
         $model=Department::model()->findByPk($id);
         if($model===null)
-            throw new CHttpException(404,'The requested page does not exist.');
+            throw new CHttpException(404,_t('The requested page does not exist.'));
         return $model;
     }
 }

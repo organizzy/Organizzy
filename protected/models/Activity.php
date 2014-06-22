@@ -63,6 +63,21 @@ class Activity extends ActiveRecord
     }
 
     /**
+     *
+     * @return array|null
+     */
+    public function getLink() {
+        if ($this->isEvent()) {
+            return ['/event/view', 'id' => $this->event->id, 'rid' => $this->recurrence_id];
+        }
+        elseif ($this->isTask()) {
+            return ['/task/view', 'id' => $this->task_id];
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * @return bool return true if type is event
      */
     public function isEvent() {

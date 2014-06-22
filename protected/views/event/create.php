@@ -3,7 +3,7 @@
 /* @var Event $model */
 /* @var EventRecurrence $recurrence */
 $this->layoutSingle($this->getBackUrlByModel($model));
-$this->pageTitle = 'Create Event';
+$this->pageTitle = _t('Create Event');
 
 ?>
 <div class="content-padded">

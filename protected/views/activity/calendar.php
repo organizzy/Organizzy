@@ -8,9 +8,9 @@
 $month = $model->month;
 $year = $model->year;
 
-$this->menu=array(
-    array('label'=>'List', 'url'=>array('index', 'mode' => 'list')),
-);
+$this->menu=[
+    ['label'=> _t('List'), 'url'=>array('index', 'mode' => 'list')],
+];
 
 $prevMonth = $model->month - 1;
 $prevYear = $model->year;

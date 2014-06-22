@@ -83,4 +83,25 @@ class ActivityController extends Controller {
             ));
     }
 
+
+    public function actionGet($date) {
+        $result = [];
+        /** @var Activity $model */
+        foreach (Activity::model()->onlyMine($this->userId)->onlyForDate($date)->withDetails()->findAll() as $model) {
+            $time = strtotime($model->datetime) * 1000;
+            $item = [
+                'id' => $model->id, 'type' => $model->type, 'title' => $model->getTitle(),
+                'datetime' => $time, 'url' => CHtml::normalizeUrl($model->getLink()),
+            ];
+            if ($model->itemType == Activity::TYPE_EVENT) {
+
+            }
+            $result[] = $item;
+        }
+        $data = json_encode(['status' => 'OK', 'result' => $result]);
+        header('Content-length: ' . strlen($data));
+        echo $data;
+    }
+
+
 } 

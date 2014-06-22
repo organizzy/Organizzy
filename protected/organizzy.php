@@ -18,14 +18,33 @@
  */
 
 
-defined('YII_DEBUG') or define('YII_DEBUG',true);
-defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
+if (O_DEBUG) {
+    defined('YII_DEBUG') or define('YII_DEBUG', true);
+    defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', 3);
 
-if (YII_DEBUG) {
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 }
 
+Yii::setPathOfAlias('lib', __DIR__ . '/../lib');
+Yii::setPathOfAlias('vendor', __DIR__ . '/../vendor');
+
+/**
+ * @param string $msg
+ * @param array $params
+ * @return string
+ */
+function _t($msg, $params = []) {
+    return O::t('organizzy', $msg, $params);
+}
+
+/**
+ * @param string $msg
+ * @param array $params
+ */
+function _p($msg, $params = []) {
+    echo O::t('organizzy', $msg, $params);
+}
 
 /**
  * Class O
@@ -61,8 +80,14 @@ class O extends Yii {
         return self::createApplication('OrganizzyApplication' , $config);
     }
 
+    /**
+     * load application configuration from apc cache
+     *
+     * @return array|null
+     */
     private static function loadConfigFromCache() {
-        return null;
+        if (O_DEBUG)
+            return null;
         if (function_exists('apc_fetch')) {
             return apc_fetch('Organizzy:config') ?: null;
         }
@@ -83,9 +108,63 @@ class O extends Yii {
  */
 class OrganizzyApplication extends CWebApplication {
 
+    public static $supportedLocale = [
+        'en' => 'en_US',
+        'en_US' => 'en_US',
+        'en_US.UTF-8' => 'en_US',
+
+        'id' => 'id_ID',
+        'id_ID' => 'id_ID',
+        'in' => 'id_ID',
+        'in_ID' => 'id_ID',
+        'id_ID.UTF-8' => 'id_ID',
+    ];
+
+    /**
+     * Organizzy custom initialization
+     */
+    protected function init() {
+        parent::init();
+        $this->initLanguage();
+
+        if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/\(tz=([^)]+)\)/', $_SERVER['HTTP_USER_AGENT'], $m)) {
+            $this->setTimeZone($m[1]);
+        }
+    }
+
+    private function initLanguage() {
+        $lang = null;
+        if (!$lang
+            && isset($_SERVER['HTTP_USER_AGENT'])
+            && preg_match('/\(lang=([a-zA-Z_]+)\)/', $_SERVER['HTTP_USER_AGENT'], $m)
+            && isset(self::$supportedLocale[$m[1]]))
+        {
+                $lang = $m[1];
+        }
+        if (!$lang && isset($_COOKIE['l']) && isset(self::$supportedLocale[$_COOKIE['l']])) {
+            $lang = $_COOKIE['l'];
+        }
+        if (!$lang && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            foreach(explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $acceptLang) {
+                $tmp = explode(';', $acceptLang);
+                if (isset(self::$supportedLocale[$tmp[0]])) {
+                    $lang = $tmp[0];
+                    break;
+                }
+            }
+        }
+
+        if ($lang) {
+            $this->setLanguage(self::$supportedLocale[$lang]);
+        }
+    }
+
     /** @var AccessRule */
     private $_accessRule = null;
 
+    /**
+     * @return string url to dummy photo
+     */
     public function getDummyPhoto() {
         return $this->getBaseUrl(true) . '/images/dummy_person.gif';
     }
@@ -100,10 +179,21 @@ class OrganizzyApplication extends CWebApplication {
         return $this->_accessRule;
     }
 
+    /**
+     *
+     * @return bool
+     * todo: remove this method
+     */
     public function getIsAjaxRequest() {
-        return $this->getClientVersion() != null || $this->request->getIsAjaxRequest();
+        return true; // $this->getClientVersion() != null || $this->request->getIsAjaxRequest();
     }
-    
+
+    /**
+     * Get current version of mobile apps used via User-Agent HTTP header
+     *
+     * @return string version string
+     * todo: remove this method
+     */
     public function getClientVersion() {
         
         if (preg_match('#OrganizzyMobile/(\S+)#i',  $_SERVER['HTTP_USER_AGENT'], $m) > 0) {

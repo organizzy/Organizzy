@@ -149,13 +149,9 @@ class Organization extends ActiveRecord implements IRoleBasedModel
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
-			'description' => 'Description',
-			'info' => 'Info',
-			'logo' => 'Logo',
-			'create_time' => 'Create Time',
-			'status' => 'Status',
+			'name' => _t('Name'),
+			'description' => _t('Description'),
+			'info' => _t('Info'),
 		);
 	}
 

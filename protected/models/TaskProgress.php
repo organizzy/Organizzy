@@ -85,12 +85,8 @@ class TaskProgress extends ActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'task_id' => 'Task',
-			'reporter_id' => 'Reporter',
-			'report_time' => 'Report Time',
-			'progress' => 'Progress (%)',
-			'comment' => 'Comment',
+			'progress' => _t('Progress (%)'),
+			'comment' => _t('Comment'),
 		);
 	}
 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Organizzy - Login User</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link href="css/ratchet.min.css" rel="stylesheet">
+    <link href="css/ratchet-theme-android.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        * {margin: 0}
+        html, body {height: 100%}
+        #page-loading {
+            background-color: #FF851B;
+            color: #ffffff;
+            font-family: "Roboto", sans-serif;
+
+        }
+        #page-loading #loading {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        #loading .logo {
+            width: 85%;
+        }
+
+        #loading .gif {
+            width: 10%;
+        }
+    </style>
+</head>
+<body id="page-loading">
+<table id="loading">
+    <tr><td>
+        <img src="images/logo.png" class="logo" /><br />
+        <img src="images/ajax_loader.gif" class="gif" /><br />
+    </td></tr>
+</table>
+<script src="js/require.js"></script>
+<script>
+
+    window._organizzy = {
+        getVersion: function() {return 'demo'},
+        getStartUpPage: function () {return null;},
+        login: function(){},
+        logout: function(){}
+    };
+    require.config({
+        baseUrl: 'js',
+
+        paths: {
+            app: '../../assets/app'
+        }
+    });
+    require(['jquery', 'app'], function($, app){
+        var serverBase = '..';
+
+        var css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = serverBase + '/assets/style.css';
+        $('head').append(css);
+
+        app.main.init(serverBase);
+        window.O = app;
+    });
+
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 /* @var $model Organization */
 
 $this->layoutSingle();
-$this->pageTitle = 'Edit';
+$this->pageTitle = _t('Edit Organization');
 $this->backUrl = $this->createUrl('view', array('id' => $model->id));
 ?>
 

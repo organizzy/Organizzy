@@ -1,0 +1,13 @@
+#recurrence-time {
+    &.fixed-time {
+        #vote-time {
+            display: none;
+        }
+    }
+
+    &.vote-time {
+        #fixed-time {
+            display: none;
+        }
+    }
+}

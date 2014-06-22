@@ -39,8 +39,12 @@
     <?php echo $content ?>
 </div>
 <div id="footer">
-    <p>Regards<br/>Organizzy Team</p>
-    <p><i><b>NB:</b> Do not reply this email</i></p>
+    <p class="regards">
+        <?php _p('Regards<br />Organizzy Team') ?>
+    </p>
+    <p>
+        <?php _p('Follow us on {twitter}', ['{twitter}' => CHtml::link('@OrganizzyApp', 'http://twitter.com/OrganizzyApp')]) ?>
+    </p>
 </div>
 </body>
 </html>

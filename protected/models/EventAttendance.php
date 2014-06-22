@@ -42,9 +42,9 @@ class EventAttendance extends ActiveRecord
     public static  function getStatusStrings($status = null) {
         $strings = null;
         if (!$strings) $strings = [
-            self::STATUS_UNKNOWN => O::t('organizzy', 'Not Responded'),
-            self::STATUS_ATTEND => O::t('organizzy', 'Attend'),
-            self::STATUS_NOT_ATTEND => O::t('organizzy', 'Not Attend'),
+            self::STATUS_UNKNOWN => _t('Not Responded'),
+            self::STATUS_ATTEND => _t('Attend'),
+            self::STATUS_NOT_ATTEND => _t('Not Attend'),
         ];
         return $status ? $strings[$status] : $strings;
     }
@@ -84,10 +84,7 @@ class EventAttendance extends ActiveRecord
     public function attributeLabels()
     {
         return array(
-            'recurrence_id' => 'Recurrence',
-            'user_id' => 'User',
-            'status' => 'Status',
-            'comment' => 'Comment',
+            'comment' => _t('Comment'),
         );
     }
 

@@ -3,26 +3,14 @@
 /* @var $model Event */
 /* @var $recurrence EventRecurrence */
 /* @var $form CActiveForm */
-//
-//if (! $model->begin_time) {
-//    $model->begin_time = date('Y-m-d H:i');
-//} else {
-//    $model->begin_time = substr($model->begin_time, 0, 16);
-//}
-//if (! $model->end_time) {
-//    $model->end_time = date('Y-m-d H:i');
-//}else {
-//    $model->end_time = substr($model->end_time, 0, 16);
-//}
 ?>
 
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'event-form',
-	'enableAjaxValidation'=>false,
-)); ?>
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
+<?php $form=$this->beginWidget('CActiveForm'); ?>
+    <p class="note">
+        <?php _p('Fields with {*} are required.', ['{*}' => '<span class="required">*</span>']); ?>
+    </p>
 
 	<?php echo $form->errorSummary($model); ?>
     <?php if ($recurrence) echo $form->errorSummary($recurrence); ?>
@@ -47,7 +35,7 @@
 
 
     <div class="row buttons">
-        <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'btn btn-block btn-primary')); ?>
+        <?php echo CHtml::submitButton($model->isNewRecord ? _t('Create') : _t('Save'), array('class' => 'btn btn-block btn-primary')); ?>
     </div>
 
 <?php $this->endWidget(); ?>

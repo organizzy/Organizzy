@@ -1,0 +1,333 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Organizzy
+ * Copyright (C) 2014 Organizzy Team
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/** @noinspection PhpIncludeInspection */
+require_once(__DIR__.'/../vendor/autoload.php');
+
+$am = new AssetManager(include(__DIR__ . '/../protected/assets/asset.php'));
+
+$all = true;
+$watch = false;
+for ($i = 1; $i<$argc; $i++) {
+    if ($i == 1 && $argv[$i] == '-w') {
+        $watch = true;
+        continue;
+    }
+
+    $all = false;
+    if ($watch)
+        $am->watch($argv[$i]);
+    else
+        $am->process($argv[$i]);
+}
+if ($all) {
+    if ($watch)
+        $am->watchAll();
+    else
+        $am->processAll();
+}
+
+/**
+ * Class AssetManager
+ */
+class AssetManager {
+
+    public $inputBase;
+    public $outputBase;
+    public $metaFile;
+    public $assets = [];
+    public $processors;
+    public $watchSleep = 1;
+
+    private $processorCache = [];
+    private $watchFiles = [];
+    private $meta = null;
+
+    /**
+     * @param array $config
+     */
+    public function __construct($config) {
+        foreach($config as $key => $value) {
+            $this->{$key} = $value;
+        }
+    }
+
+    /**
+     * @param bool $force
+     */
+    public function processAll($force = false) {
+        foreach ($this->assets as $id => $data) {
+            $this->process($id, $force);
+        }
+    }
+
+    /**
+     * @param int $id
+     * @param bool $force
+     */
+    public function process($id, $force = false) {
+        $data = $this->assets[$id];
+        $output = $this->outputBase . '/' . $data['out'];
+        $inputs = [];
+        foreach($data['in'] as $in) {
+            $inputs[] = $this->inputBase . '/' . $in;
+        }
+        $options = isset($data['options']) ? $data['options'] : [];
+
+        $processor = $this->getProcessor($data['type']);
+        echo "processing '$output' ...\n";
+        unlink($output);
+        $processor->process($output, $inputs, $options);
+    }
+
+    /**
+     * @param int $id
+     */
+    public function watch($id) {
+        while(true) {
+            clearstatcache();
+            if ($this->inputChanged($id) > 0) {
+                $this->process($id);
+            }
+            sleep($this->watchSleep);
+        }
+    }
+
+    /**
+     * watch all
+     */
+    public function watchAll() {
+        while(true) {
+            clearstatcache();
+            foreach ($this->assets as $id => $data) {
+                if ($this->inputChanged($id) > 0) {
+                    $this->process($id);
+                }
+            }
+            sleep($this->watchSleep);
+        }
+    }
+
+    /**
+     * @param int $id
+     * @return int
+     */
+    private function inputChanged($id) {
+        $data = $this->assets[$id];
+        if (! isset($this->watchFiles[$id])) {
+            if (isset($data['watch'])) {
+                $this->watchFiles[$id] = array_merge($data['in'], $data['watch']);
+            } else {
+                $this->watchFiles[$id] = $data['in'];
+            }
+        }
+
+        $outFile = $this->outputBase . '/' . $data['out'];
+        $outTime = file_exists($outFile) ? filemtime($outFile) : 0;
+
+        foreach($this->watchFiles[$id] as $input) {
+            $diff = filemtime($this->inputBase . '/' . $input) - $outTime;
+            if ($diff > 0) {
+                echo "File $input changed\n";
+                return $diff;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @param string $type
+     * @return AssetProcessor
+     * @throws Exception
+     */
+    public function getProcessor($type) {
+        if (! isset($this->processorCache[$type])) {
+            if (! isset($this->processors[$type])) {
+                throw new Exception('Unknown asset type: ' . $type);
+            }
+
+            foreach ($this->processors[$type] as $class) {
+                $method = [$class, 'supported'];
+                if (is_callable($method) && call_user_func($method, $type)) {
+                    return $this->processorCache[$type] = new $class($this, $type);
+                }
+            }
+
+            $this->processorCache[$type] = null;
+        }
+        if ($this->processorCache[$type])
+            return $this->processorCache[$type];
+        else
+            throw new Exception('No processor supported for type ' . $type);
+    }
+
+}
+
+abstract class AssetProcessor {
+
+    /** @var  AssetManager */
+    protected $manager;
+
+    function __construct($manager)
+    {
+        $this->manager = $manager;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public static function supported() {
+        return true;
+    }
+
+    /**
+     * @param $output
+     * @param $inputs
+     * @param array $options
+     * @return bool
+     */
+    public function process($output, $inputs, $options = []){
+        $fp = fopen($output, 'w');
+        foreach($inputs as $input) {
+            fwrite($fp, $this->processFile($input, $options));
+        }
+        fclose($fp);
+    }
+
+    /**
+     * @param $input
+     * @param array $options
+     * @return string
+     */
+    protected abstract function processFile($input, $options =[]);
+
+    /**
+     * @return string
+     */
+    public static function getClass() {
+        return get_called_class();
+    }
+}
+
+class ScssPhpAssetProcessor extends  AssetProcessor {
+
+    private $scss;
+
+    public function __construct() {
+        $this->scss = new scssc();
+        $this->scss->setFormatter('scss_formatter_compressed');
+    }
+
+    /**
+     * @param $input
+     * @param array $options
+     * @return string
+     */
+    protected function processFile($input, $options = [])
+    {
+        $this->scss->addImportPath(dirname($input));
+        return preg_replace('/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/s', '', $this->scss->compile(file_get_contents($input)));
+    }
+}
+
+class JsMinAssetProcessor extends AssetProcessor {
+
+    /**
+     * @param $input
+     * @param array $options
+     * @return string
+     */
+    protected function processFile($input, $options = [])
+    {
+       return JSMinPlus::minify(file_get_contents($input)) . ';';
+    }
+}
+
+class ClosureAssetProcessor extends AssetProcessor {
+
+    private static $bin = null; 
+    
+    public static function supported() {
+        return self::getBin() != false;
+    }
+    
+    
+    private static function getBin() {
+        if (self::$bin === null) {
+            foreach(explode(':', getenv('PATH')) as $path) {
+                $bin = $path . '/closure';
+                if (file_exists($bin)) {
+                    return self::$bin = $bin;
+                }
+            }
+        }
+        return self::$bin;
+    }
+
+    /**
+     * @param $output
+     * @param $inputs
+     * @param array $options
+     * @return bool
+     */
+    public function process($output, $inputs, $options = []){
+        $input_escaped = [];
+        foreach($inputs as $v) {
+            $input_escaped[] = escapeshellarg($v);
+        }
+        $output = escapeshellarg($output);
+        $input_escaped = implode(' ', $input_escaped);
+        `closure --js_output_file $output $input_escaped`;
+    }
+
+
+    /**
+     * @param $input
+     * @param array $options
+     * @return string
+     */
+    protected function processFile($input, $options = [])
+    {
+        
+    }
+}
+
+class RequireJsAssetProcessor extends AssetProcessor {
+
+    public function __construct($manager) {
+        parent::__construct($manager);
+        require_once(__DIR__ . '/../lib/RequireJS/Optimizer.php');
+    }
+
+    /**
+     * @param $input
+     * @param array $options
+     * @return string
+     */
+    protected function processFile($input, $options = [])
+    {
+        $optimizer = new lib\RequireJS\Optimizer(dirname($input));
+        $optimizer->addModule(basename($input, '.js'));
+        $content = $optimizer->export();
+        return JSMinPlus::minify($content);
+
+    }
+}
