@@ -18,6 +18,7 @@
 "use strict";
 define(['jquery', './navigation'], function($, navigation){
     var main = {};
+    var $body = $(document.body);
 
     main.init = function(baseUrl) {
         navigation.setBaseUrl(baseUrl);
@@ -100,6 +101,46 @@ define(['jquery', './navigation'], function($, navigation){
         }
     };
 
+    if (window.cordova) {
+        $body.on('pagechange', function(){
+            $('input[type="date"]')
+                .attr({'type': 'text', 'readonly': 1})
+                .click(function () {
+                    var $this = $(this);
+                    var date;
+                    if ($this.val() != '') {
+                        date = new Date($this.val());
+                    } else {
+                        date = new Date();
+                    }
+
+                    window.datePicker.show({date: date, mode: 'date'}, function(date) {
+                        if (! isNaN(date.getTime())) {
+                            $this.val(date.getUTCFullYear() + '-' + (1+date.getMonth()) + '-' + date.getDate());
+                        }
+                    });
+                });
+
+            $('input[type="time"]')
+                .attr({'type': 'text', 'readonly': 1})
+                .click(function () {
+                    var $this = $(this);
+                    var date = new Date();
+                    if ($this.val() != '') {
+                        var t = $this.val().split(':');
+                        date.setHours(t[0], t[1], t[2]);
+                    }
+
+                    window.datePicker.show({date: date, mode: 'time'}, function(date) {
+                        if (! isNaN(date.getTime())) {
+                            $this.val(date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds());
+                        }
+                    });
+                });
+        });
+    }
+
+
     //---------------------
     // FLASH
     //---------------------
@@ -108,7 +149,7 @@ define(['jquery', './navigation'], function($, navigation){
     });
 
     var flashTimeout = null;
-    $(document.body).on('pagechange', function(){
+    $body.on('pagechange', function(){
         if (flashTimeout) clearTimeout(flashTimeout);
 
         flashTimeout = setTimeout(function(){
@@ -138,7 +179,7 @@ define(['jquery', './navigation'], function($, navigation){
         e.preventDefault();
     });
 
-    $(document.body).on('pagechange', function(e){
+    $body.on('pagechange', function(e){
         var hash = location.hash;
         if (hash && hash.indexOf('tab=')>0) {
             changeTab(hash.match(/tab=([^&]+)/)[1]);
