@@ -166,13 +166,15 @@ class OrganizationController extends Controller
         else
             $model = new Photo();
 
-        if (FormHandler::save($model)) {
-            if ($org->logo_id != $model->id)
-                Organization::model()->updateByPk($id, ['logo_id' => $model->id]);
-            $org->invalidateCache();
-            //$this->redirect(['view', 'id' => $id]);
-            AjaxHandler::returnScript('$("#profile-photo").css({backgroundImage:"url(' . $model->getUrl('m') . ')"})');
+        if ($model->handleFileUpload('file', $org)) {
+            $result = ['status' => 'OK', 'result' => [
+                'normal' => $model->getUrl(),
+                'thumb' => $model->getUrl('m'),
+            ]];
+        } else {
+            $result = ['status' => 'ERR', 'error' => $model->getErrors()];
         }
+        echo json_encode($result);
     }
 
 	/**

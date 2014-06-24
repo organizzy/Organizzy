@@ -51,7 +51,7 @@
  *
  * @method User findByPk($pk)
  */
-class User extends ActiveRecord
+class User extends ActiveRecord implements IPhotoModel
 {
 
     const STATUS_ACTIVE = 'active';
@@ -125,6 +125,21 @@ class User extends ActiveRecord
 
     public function defaultScope() {
         return ['with' => 'photo'];
+    }
+
+
+    /**
+     * @param Photo $photo
+     * @return bool
+     * @throws Exception
+     */
+    public function setPhoto(Photo $photo)
+    {
+        if ($this->photo_id != $photo->id) {
+            $this->photo_id = $photo->id;
+            return $this->save();
+        }
+        return true;
     }
 
     /**
