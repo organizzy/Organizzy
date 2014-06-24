@@ -71,6 +71,7 @@ define(['jquery', './navigation'], function($, navigation){
     //---------------------------------------------
     // BACK BUTTON
     //---------------------------------------------
+    // TODO: use registerBackHandler()
     document.addEventListener("backbutton", function(e){
         if (moreMenuShown) {
             toggleMenu(false);
@@ -198,13 +199,67 @@ define(['jquery', './navigation'], function($, navigation){
     //---------------------------------------------
     // PROFILE VIEW
     //---------------------------------------------
-    $(document).on('click', '.profile-header .photo', function(){
-       $('#Photo_file').click();
+    $(document).on('click', '#profile-photo', function(){
+        var $elm =$('#photo-full');
+        $elm.css('backgroundImage', 'url(' + $elm.attr('data-photo') + ')').fadeIn();
+
     });
 
-    $(document).on('change', '#Photo_file', function() {
-        $('#photo-upload-form').submit();
-    });
+    if (window.cordova) {
+        $(document).on('click', '.photo-upload', function(e){
+            var targetUrl = $(e.currentTarget).attr('data-target');
+            var source = navigator.camera.PictureSourceType.PHOTOLIBRARY;
+            if ($(e.currentTarget).attr('data-source') == 'camera') {
+                source = navigator.camera.PictureSourceType.CAMERA;
+            }
+
+            function uploadPhoto(imageURI) {
+                var options = new FileUploadOptions();
+                options.fileKey = "file";
+                options.fileName = imageURI.substr(imageURI.lastIndexOf('/')+1)+'.png';
+                options.mimeType = "text/plain";
+
+                options.params = {};
+
+                var ft = new FileTransfer();
+                $('#loader').fadeIn();
+                ft.upload(imageURI, encodeURI(targetUrl), win, fail, options);
+            }
+
+            function win(e) {
+                var response = JSON.parse(e.response);
+                if (response.status == 'OK') {
+                    $('#profile-photo').css('backgroundImage', 'url(' + response.result.thumb + ')');
+                    $('#photo-full').css('backgroundImage', 'url(' + response.result.normal + ')');
+                } else {
+                    alert("Upload error: " + response.error);
+                }
+                $('#loader').fadeOut();
+                console.log(e);
+            }
+
+            function fail(e) {
+                console.error(e);
+                $('#loader').fadeOut();
+                alert("Upload error");
+            }
+
+            navigator.camera.getPicture(uploadPhoto,
+                function(message) { console.log(message) },
+                {
+                    destinationType: navigator.camera.DestinationType.FILE_URI,
+                    sourceType: source,
+                    encodingType: navigator.camera.EncodingType.JPEG,
+                    quality: 80,
+                    targetWidth: 800,
+                    targetHeight: 800
+                }
+            );
+        });
+
+    }
+
+
 
     return main;
 });

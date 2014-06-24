@@ -66,7 +66,27 @@ class Photo extends ActiveRecord
         if ($size) {
             return O::app()->getBaseUrl(true) . $this->url . '-' . $size . '.jpg';
         } else
-            return $this->url;
+            return O::app()->getBaseUrl(true) . $this->url;
+    }
+
+    /**
+     * @param string $fieldName
+     * @param IPhotoModel $targetModel
+     * @return bool
+     * @throws Exception
+     */
+    public function handleFileUpload($fieldName, IPhotoModel $targetModel = null) {
+        $file = CUploadedFile::getInstanceByName($fieldName);
+        if ($file) {
+            $this->file = $file;
+            if ($this->save()) {
+                if ($targetModel) {
+                    $targetModel->setPhoto($this);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
