@@ -36,7 +36,7 @@
  *
  * @property Role $role current user role
  */
-class Organization extends ActiveRecord implements IRoleBasedModel
+class Organization extends ActiveRecord implements IRoleBasedModel, IPhotoModel
 {
     /**
      * @param null $user_id
@@ -51,13 +51,25 @@ class Organization extends ActiveRecord implements IRoleBasedModel
     }
 
     /**
+     * @param Photo $photo
+     * @return bool
+     * @throws Exception
+     */
+    public function setPhoto(Photo $photo)
+    {
+        if ($this->logo_id != $photo->id) {
+            $this->logo_id = $photo->id;
+            return $this->save();
+        }
+        return true;
+    }
+
+    /**
      * @return string return organization name
      */
     public function __toString() {
         return $this->name;
     }
-
-
 
     /**
      * @param null|int $user_id [optional]

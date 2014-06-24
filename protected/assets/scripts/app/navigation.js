@@ -35,8 +35,8 @@ define(['jquery'], function($, undefined){
             context: document.body,
             data: data,
             type: data ? 'POST' : 'GET',
-            processData: !(data instanceof FormData),
-            contentType: (data instanceof FormData) ? false : 'application/x-www-form-urlencoded',
+//            processData: !(data instanceof FormData),
+//            contentType: (data instanceof FormData) ? false : 'application/x-www-form-urlencoded',
             timeout: 45000,
 
             xhrFields: {

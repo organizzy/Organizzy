@@ -166,7 +166,7 @@ class OrganizzyApplication extends CWebApplication {
      * @return string url to dummy photo
      */
     public function getDummyPhoto() {
-        return $this->getBaseUrl(true) . '/images/dummy_person.gif';
+        return 'images/dummy_person.gif';
     }
 
     /**

@@ -138,19 +138,20 @@ class UserController extends Controller {
 
     public function actionUploadPhoto() {
         $user = $this->loadModel($this->userId);
-
         if ($user->photo_id)
             $model = Photo::model()->findByPk($user->photo_id);
         else
             $model = new Photo();
 
-        if (FormHandler::save($model)) {
-            if ($user->photo_id != $model->id)
-                User::model()->updateByPk($this->userId, ['photo_id' => $model->id]);
-
-            $user->invalidateCache();
-            $this->redirect(['view', 'id' => $this->userId]);
+        if ($model->handleFileUpload('file', $user)) {
+            $result = ['status' => 'OK', 'result' => [
+                'normal' => $model->getUrl(),
+                'thumb' => $model->getUrl('m'),
+            ]];
+        } else {
+            $result = ['status' => 'ERR', 'error' => $model->getErrors()];
         }
+        echo json_encode($result);
     }
 
     public function actionActivate($resend = false) {
