@@ -6,7 +6,7 @@ $data = array(
     'id' => $this->getPageId(),
     'url' => Yii::app()->request->url,
     'title' => $this->getPageTitle(),
-    'backUrl' => O::app()->baseUrl . (is_array($this->backUrl) ? $this->createUrl($this->backUrl) : $this->backUrl),
+    'backUrl' => (is_array($this->backUrl) ? $this->createUrl($this->backUrl) : $this->backUrl),
 );
 if (O::app()->session->isStarted) {
     $data['sid'] = O::app()->session->sessionID;
