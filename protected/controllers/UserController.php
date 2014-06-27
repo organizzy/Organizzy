@@ -37,7 +37,8 @@ class UserController extends Controller {
 
             // validate user input and redirect to the previous page if valid
             if($model->validate() && $model->login()) {
-                AjaxHandler::returnScript('O.user.login("' . O::app()->session->sessionID . '");O.navigation.changePage("/activity/index");');
+                AjaxHandler::returnScript('O.user.login("' . O::app()->session->sessionID .
+                    '");O.navigation.changePage("' . CHtml::normalizeUrl(['/activity/index'])  . '");');
             }
                 //$this->redirect(O::app()->user->returnUrl);
         }
@@ -52,7 +53,7 @@ class UserController extends Controller {
     public function actionLogout()
     {
         O::app()->user->logout();
-        AjaxHandler::returnScript('O.user.logout();O.navigation.changePage("/user/login");');
+        AjaxHandler::returnScript('O.user.logout();O.navigation.changePage("' . CHtml::normalizeUrl(['/user/login'])  . '");');
     }
 
     /**

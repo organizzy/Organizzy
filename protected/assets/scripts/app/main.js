@@ -15,20 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-"use strict";
 define(['jquery', './navigation'], function($, navigation){
     var main = {};
     var $body = $(document.body);
 
     main.init = function(baseUrl) {
-        navigation.setBaseUrl(baseUrl);
+        var host = '', dir = baseUrl;
+        var hPos = baseUrl.indexOf('//');
+        if (hPos > -1) {
+            var dPos = baseUrl.indexOf('/', hPos + 2);
+            host = baseUrl.substr(0, dPos);
+            dir = baseUrl.substr(dPos);
+        }
+
+        navigation.setBaseUrl(host);
 
         var currentPage = _organizzy.getStartUpPage() || navigation.getCurrentPage();
         if (currentPage) {
             navigation.changePage(currentPage);
         }
         else {
-            navigation.changePage('/site/boot?v=' + 100);
+            navigation.changePage(dir + '/site/boot?v=' + _organizzy.getVersion());
         }
     };
 
