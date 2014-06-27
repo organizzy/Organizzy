@@ -14,10 +14,12 @@ return [
     'assets' => [
         [
             'out' => 'app.js',
-            'in' => ['scripts/app.js'],
+            'in' => ['scripts/app.rjs'],
             'watch' => [
+                'scripts/app.js',
                 'scripts/app/navigation.js',
                 'scripts/app/main.js',
+                'scripts/app/user.js',
             ],
             'type' => 'r.js',
         ],
