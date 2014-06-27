@@ -11,7 +11,7 @@
 <div class="profile-header">
     <div class="content-padded">
         <div class="photo-container">
-            <span class="photo" id="profile-photo" onclick="$('#photo-full').fadeIn()"
+            <span class="photo" id="profile-photo"
                   style="background-image: url(<?php echo $photo ? $photo->getUrl('m') : O::app()->dummyPhoto ?>)"></span>
         </div>
         <h2 class="name"><?php echo CHtml::encode($name) ?></h2>
