@@ -15,37 +15,80 @@ namespace lib\RequireJS;
  * @package lib\RequireJS
  */
 class Optimizer {
+    const DEFINE_PREFIX = '_mod_';
     private $baseDir;
-    public $exclude = ['jquery'=>1];
+    public $exclude = [];
 
     private $importedModule = [];
     private $modules = [];
+    private $neededModules = [];
+    public $globalVars = [];
 
     public function __construct($baseDir) {
         $this->baseDir = $baseDir;
     }
 
-    public function addModule($name) {
-        if (!isset($this->importedModule[$name]) && !isset($this->exclude[$name])) {
-            $this->importedModule[$name] = true;
-
-            foreach (self::getDependencyFromFile($this->getJsFileName($name)) as $m) {
-                if ($m{0} == '.') $m = dirname($name) . substr($m, 1);
-                $this->addModule($m);
-            }
-
-            $this->modules[] = $name;
-        }
+    public function addExternalModule($name) {
+        $this->exclude[$name] = true;
     }
 
-    public function export() {
+    public function addModule($name) {
+        $this->neededModules[$name] = self::DEFINE_PREFIX . str_replace('/', '_', $name);
+
+        if (isset($this->exclude[$name])) {
+            return $this->neededModules[$name];
+        }
+        elseif (!isset($this->importedModule[$name])) {
+            $this->importedModule[$name] = [
+                'var' => $this->neededModules[$name]
+            ];;
+
+            $dependency = [];
+            foreach (self::getDependencyFromFile($this->getJsFileName($name)) as $m) {
+                if ($m{0} == '.') $m = dirname($name) . substr($m, 1);
+                $dependency[] = $this->addModule($m);
+            }
+
+            $this->importedModule[$name]['dependency'] = $dependency;
+            $this->modules[] = $name;
+        }
+        return $this->neededModules[$name];
+    }
+
+    public function export($modules) {
         $result = [];
+
+        $vars = [];
+        $i = 1;
+        foreach($this->neededModules as $k=>$v) {
+            if (isset($this->exclude[$k]) || in_array($k, $modules)) {
+                $name = $k;
+            } else {
+                $name = '_m' . $i++;
+            }
+            $vars[] = $v . ' = "' . $name . '"';
+        }
+        //$result[] = '!function(' . implode(',', $fun_args) . '){' . PHP_EOL;
         foreach($this->modules as $m) {
-            $content = file_get_contents($this->getJsFileName($m));
-            $result[] = preg_replace('/define\s*\(\s*\[/', 'define("' . $m . '", [', $content);
+            $data = $this->importedModule[$m];
+            $content = \JSMinPlus::minify(file_get_contents($this->getJsFileName($m)));
+            //$result[] = preg_replace('/define\s*\(\s*\[/', 'define("' . $m . '", [', $content);
+            $result[] = preg_replace(
+                '/define\s*\(\s*\[[^\]]*\]+\s*,/',
+                'define(' . $data['var'] . ', [' . implode(',', $data['dependency']) . '], ',
+                $content
+            );
         }
 
-        return implode("\n", $result);
+        if (count($this->globalVars) > 0) {
+            $globals = 'define, ' . implode(', ', $this->globalVars);
+        } else {
+            $globals = 'define';
+        }
+
+
+        return '!function(' . $globals . ', undefined){ var ' . implode(', ', $vars) . ";" .
+            implode(";", $result) . '}(' . $globals . ')';
     }
 
     private function getJsFileName($moduleName) {
