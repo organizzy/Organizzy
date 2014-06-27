@@ -27,6 +27,10 @@ define(['jquery'], function($, undefined){
     var baseUrl = '';
     $.support.cors = true;
 
+    function _eval(str) {
+        window['eval'](str);
+    }
+
     function loadPage(url, data, options) {
         options = options || {};
 
@@ -58,7 +62,7 @@ define(['jquery'], function($, undefined){
 
             success: function(data, status, xhr) {
                 if (xhr.getResponseHeader('Content-type').indexOf('javascript') > 0) {
-                    eval(data);
+                    _eval(data);
                 }
                 else {
                     replacePageContent(url, data, true, options);
@@ -71,7 +75,6 @@ define(['jquery'], function($, undefined){
     }
 
     function replacePageContent(url, content, saveCache) {
-        //options = options || {};
 
         var iPos = content.indexOf('<!--page:');
         if (iPos >= 0) {
