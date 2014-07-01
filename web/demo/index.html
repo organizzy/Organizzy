@@ -49,25 +49,57 @@
         getVersion: function() {return 'demo'},
         getStartUpPage: function () {return null;},
         login: function(){},
-        logout: function(){}
+        logout: function(){},
+        getBaseServer: function(){
+            var basePath = location.pathname;
+            basePath = basePath.substr(0, basePath.lastIndexOf('/', basePath.lastIndexOf('/') - 1));
+            return basePath
+        }
     };
+    var serverBase = _organizzy.getBaseServer();
+
     require.config({
         baseUrl: 'js',
+        waitSeconds: 30,
 
         paths: {
-            app: '../../assets/app'
+            app: serverBase + '/assets/app'
         }
     });
-    require(['jquery', 'app'], function($, app){
-        var serverBase = '..';
 
-        var css = document.createElement('link');
-        css.rel = 'stylesheet';
-        css.href = serverBase + '/assets/style.css';
-        $('head').append(css);
+    require(['require', 'jquery'], function(require, $) {
+        $('head').append('<link rel="stylesheet" href="' + serverBase + '/assets/style.css">');
+        var logoSize = "";
+        var w = document.body.clientWidth;
+        if (w <= 240)
+            logoSize = "-ldpi";
+        else if (w <= 480)
+            logoSize = "-mdpi";
+        $('#logo').attr('src', 'images/logo' + logoSize + '.png');
 
-        app.main.init(serverBase);
-        window.O = app;
+        var nTry = 3;
+        require.onError = function (err) {
+            console.log(err.requireType);
+            if (err.requireType === 'timeout') {
+                if (--nTry > 0)
+                    loadApp(require);
+                else {
+                    alert('Network error');
+                    navigator.app.exitApp();
+                }
+            }
+
+            throw err;
+        };
+
+        function loadApp(require) {
+            require(['app'], function(app){
+                window.O = app;
+                app.main.init(serverBase);
+            });
+        }
+
+        loadApp(require);
     });
 
 </script>

@@ -18,15 +18,14 @@
 
 define(['jquery', './navigation'], function($, navigation){
     var user = {};
-    var organizzy = window._organizzy || {};
 
     user.login = function(sid){
-        if (organizzy.login) organizzy.login(sid);
+        if (_organizzy.login) _organizzy.login(sid);
         navigation.clearCache();
     };
 
     user.logout = function() {
-        if (organizzy.logout) organizzy.logout();
+        if (_organizzy.logout) _organizzy.logout();
         navigation.clearCache();
     };
 

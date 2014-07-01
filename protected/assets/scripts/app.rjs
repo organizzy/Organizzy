@@ -1,0 +1,6 @@
+{
+    "modules": ["app"],
+    "exports": ["app"],
+    "external": ["jquery"],
+    "globalVars": ["window", "document", "_organizzy"]
+}
