@@ -24,8 +24,10 @@ define(['jquery', './navigation'], function($, navigation){
         var hPos = baseUrl.indexOf('//');
         if (hPos > -1) {
             var dPos = baseUrl.indexOf('/', hPos + 2);
-            host = baseUrl.substr(0, dPos);
-            dir = baseUrl.substr(dPos);
+            if (dPos > -1) {
+                host = baseUrl.substr(0, dPos);
+                dir = baseUrl.substr(dPos);
+            }
         }
 
         navigation.setBaseUrl(host);
