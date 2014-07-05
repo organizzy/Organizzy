@@ -97,7 +97,7 @@ define(['jquery', './navigation'], function($, navigation){
     //---------------------
     main.handleFormError = function(model, errors) {
         $('.errorMessage').hide();
-        for(var attr in errors) {
+        $.each(errors, function(attr, error){
             var name = model + '[' + attr + ']';
             var rows = $('[name="' + name + '"]').parent();
             if (rows.length > 0) rows.each(function(i, row){
@@ -106,9 +106,9 @@ define(['jquery', './navigation'], function($, navigation){
                     $error = $('<div class="errorMessage"></div>');
                     $(row).append($error);
                 }
-                $error.html(errors[attr].join('<br />')).show();
+                $error.html(error.join('<br />')).show();
             });
-        }
+        });
     };
 
     if (window.cordova) {
@@ -211,6 +211,9 @@ define(['jquery', './navigation'], function($, navigation){
     $(document).on('click', '#profile-photo', function(){
         var $elm =$('#photo-full');
         $elm.css('backgroundImage', 'url(' + $elm.attr('data-photo') + ')').fadeIn();
+        if (!window.cordova) {
+            $('.photo-upload').hide();
+        }
 
     });
 
@@ -220,37 +223,6 @@ define(['jquery', './navigation'], function($, navigation){
             var source = navigator.camera.PictureSourceType.PHOTOLIBRARY;
             if ($(e.currentTarget).attr('data-source') == 'camera') {
                 source = navigator.camera.PictureSourceType.CAMERA;
-            }
-
-            function uploadPhoto(imageURI) {
-                var options = new FileUploadOptions();
-                options.fileKey = "file";
-                options.fileName = imageURI.substr(imageURI.lastIndexOf('/')+1)+'.png';
-                options.mimeType = "text/plain";
-
-                options.params = {};
-
-                var ft = new FileTransfer();
-                $('#loader').fadeIn();
-                ft.upload(imageURI, encodeURI(targetUrl), win, fail, options);
-            }
-
-            function win(e) {
-                var response = JSON.parse(e.response);
-                if (response.status == 'OK') {
-                    $('#profile-photo').css('backgroundImage', 'url(' + response.result.thumb + ')');
-                    $('#photo-full').css('backgroundImage', 'url(' + response.result.normal + ')');
-                } else {
-                    alert("Upload error: " + response.error);
-                }
-                $('#loader').fadeOut();
-                console.log(e);
-            }
-
-            function fail(e) {
-                console.error(e);
-                $('#loader').fadeOut();
-                alert("Upload error");
             }
 
             navigator.camera.getPicture(uploadPhoto,
@@ -266,8 +238,38 @@ define(['jquery', './navigation'], function($, navigation){
             );
         });
 
-    }
+        function uploadPhoto(imageURI) {
+            var options = new FileUploadOptions();
+            options.fileKey = "file";
+            options.fileName = imageURI.substr(imageURI.lastIndexOf('/')+1)+'.png';
+            options.mimeType = "text/plain";
 
+            options.params = {};
+
+            var ft = new FileTransfer();
+            $('#loader').fadeIn();
+            ft.upload(imageURI, encodeURI(targetUrl), uploadSuccess, uploadError, options);
+        }
+
+        function uploadSuccess(data) {
+            var response = JSON.parse(data.response);
+            if (response.status == 'OK') {
+                $('#profile-photo').css('backgroundImage', 'url(' + response.result.thumb + ')');
+                $('#photo-full').css('backgroundImage', 'url(' + response.result.normal + ')');
+            } else {
+                alert("Upload error: " + response.error);
+            }
+            $('#loader').fadeOut();
+            console.log(data);
+        }
+
+        function uploadError(e) {
+            console.error(e);
+            $('#loader').fadeOut();
+            alert("Upload error");
+        }
+
+    }
 
 
     return main;
