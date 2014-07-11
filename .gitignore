@@ -1,7 +1,7 @@
-web/assets/*
-!web/assets/.gitkeep
-web/photos/*
-!web/photos/.gitkeep
+public/assets/*
+!public/assets/.gitkeep
+public/photos/*
+!public/photos/.gitkeep
 protected/runtime/*
 !protected/runtime/.gitkeep
 themes/classic/views/
