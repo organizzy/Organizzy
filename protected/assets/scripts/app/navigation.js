@@ -27,10 +27,6 @@ define(['jquery'], function($, undefined){
     var baseUrl = '';
     $.support.cors = true;
 
-    function _eval(str) {
-        window['eval'](str);
-    }
-
     function loadPage(url, data, options) {
         options = options || {};
 
@@ -39,17 +35,10 @@ define(['jquery'], function($, undefined){
             context: document.body,
             data: data,
             type: data ? 'POST' : 'GET',
-//            processData: !(data instanceof FormData),
-//            contentType: (data instanceof FormData) ? false : 'application/x-www-form-urlencoded',
             timeout: 45000,
 
             xhrFields: {
                 withCredentials: true
-            },
-
-            beforeSend: function(xhr) {
-                //if (localStorage.getItem('sessionId'))
-                //    xhr.setRequestHeader('Cookie', localStorage.getItem('sessionId'));
             },
 
             error: function( xhr, status, error ) {
@@ -61,14 +50,15 @@ define(['jquery'], function($, undefined){
             },
 
             success: function(data, status, xhr) {
+                $('#loader').hide();
+
                 if (xhr.getResponseHeader('Content-type').indexOf('javascript') > 0) {
-                    _eval(data);
+                    window['eval'](data);
                 }
                 else {
                     replacePageContent(url, data, true, options);
                 }
 
-                $('#loader').hide();
                 loadPageXhr = undefined;
             }
         });
@@ -105,9 +95,12 @@ define(['jquery'], function($, undefined){
 
 
             $body.attr('id', 'page-' + arg.id);
+            $body.html(content);
+            $body.trigger('pagechange');
         }
-        $body.html(content);
-        $body.trigger('pagechange');
+        else {
+            alert('Server Error');
+        }
     }
 
     navigation.setBaseUrl = function(_baseUrl) {

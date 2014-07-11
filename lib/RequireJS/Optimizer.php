@@ -71,7 +71,7 @@ class Optimizer {
         //$result[] = '!function(' . implode(',', $fun_args) . '){' . PHP_EOL;
         foreach($this->modules as $m) {
             $data = $this->importedModule[$m];
-            $content = \JSMinPlus::minify(file_get_contents($this->getJsFileName($m)));
+            $content = file_get_contents($this->getJsFileName($m));
             //$result[] = preg_replace('/define\s*\(\s*\[/', 'define("' . $m . '", [', $content);
             $result[] = preg_replace(
                 '/define\s*\(\s*\[[^\]]*\]+\s*,/',
