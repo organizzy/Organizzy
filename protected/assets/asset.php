@@ -41,7 +41,6 @@ return [
 
     'processors' => [
         'r.js' => [RequireJsAssetProcessor::getClass()],
-        'js' => [ClosureAssetProcessor::getClass(), JsMinAssetProcessor::getClass()], // ClosureAssetProcessor::getClass(),
         'scss' => [ScssPhpAssetProcessor::getClass()],
     ],
 ];
