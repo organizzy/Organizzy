@@ -247,67 +247,6 @@ class ScssPhpAssetProcessor extends  AssetProcessor {
     }
 }
 
-class JsMinAssetProcessor extends AssetProcessor {
-
-    /**
-     * @param $input
-     * @param array $options
-     * @return string
-     */
-    protected function processFile($input, $options = [])
-    {
-       return JSMinPlus::minify(file_get_contents($input)) . ';';
-    }
-}
-
-class ClosureAssetProcessor extends AssetProcessor {
-
-    private static $bin = null; 
-    
-    public static function supported() {
-        return self::getBin() != false;
-    }
-    
-    
-    private static function getBin() {
-        if (self::$bin === null) {
-            foreach(explode(':', getenv('PATH')) as $path) {
-                $bin = $path . '/closure';
-                if (file_exists($bin)) {
-                    return self::$bin = $bin;
-                }
-            }
-        }
-        return self::$bin;
-    }
-
-    /**
-     * @param $output
-     * @param $inputs
-     * @param array $options
-     * @return bool
-     */
-    public function process($output, $inputs, $options = []){
-        $input_escaped = [];
-        foreach($inputs as $v) {
-            $input_escaped[] = escapeshellarg($v);
-        }
-        $output = escapeshellarg($output);
-        $input_escaped = implode(' ', $input_escaped);
-        `closure --js_output_file $output $input_escaped`;
-    }
-
-
-    /**
-     * @param $input
-     * @param array $options
-     * @return string
-     */
-    protected function processFile($input, $options = [])
-    {
-        
-    }
-}
 
 class RequireJsAssetProcessor extends AssetProcessor {
 
