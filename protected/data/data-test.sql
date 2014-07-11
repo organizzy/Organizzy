@@ -2,9 +2,9 @@
 
 INSERT INTO "user" (id, email, password, name, about) VALUES
   (100, 'demo@demo.com', '$1$ITmgEqUA$.sBUwbaY7PQmHhzK975Pf1', 'Demo User', 'Organizzy Demo User'),
-  (100, 'user1@demo.com', '$1$ITmgEqUA$.sBUwbaY7PQmHhzK975Pf1', 'Test User 1', 'Organizzy Demo User'),
-  (100, 'user2@demo.com', '$1$ITmgEqUA$.sBUwbaY7PQmHhzK975Pf1', 'Test User 2', 'Organizzy Demo User'),
-  (100, 'user3@demo.com', '$1$ITmgEqUA$.sBUwbaY7PQmHhzK975Pf1', 'Test User 3', 'Organizzy Demo User')
+  (101, 'user1@demo.com', '$1$ITmgEqUA$.sBUwbaY7PQmHhzK975Pf1', 'Test User 1', 'Organizzy Demo User'),
+  (102, 'user2@demo.com', '$1$ITmgEqUA$.sBUwbaY7PQmHhzK975Pf1', 'Test User 2', 'Organizzy Demo User'),
+  (103, 'user3@demo.com', '$1$ITmgEqUA$.sBUwbaY7PQmHhzK975Pf1', 'Test User 3', 'Organizzy Demo User')
 
 ;
 
@@ -13,7 +13,7 @@ INSERT INTO "profile" (user_id, prop_name, prop_val) VALUES
 
 INSERT INTO "organization" (id, name, description, info) VALUES
   (1000, 'Test', 'Test Organization', 'Describe vision, mission, and value of organization'),
-  (1000, 'Other', 'Other Committee', 'Describe vision, mission, and value of committee');
+  (1001, 'Other', 'Other Committee', 'Describe vision, mission, and value of committee');
 
 INSERT INTO "department" (id, organization_id, name, description) VALUES
   (2001, 1000, 'Department 1', 'Test Department 1'),
